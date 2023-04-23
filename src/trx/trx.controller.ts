@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TrxService } from './trx.service';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('trx')
 @Controller('trx')
 export class TrxController {
   constructor(private readonly trxService: TrxService) {}
