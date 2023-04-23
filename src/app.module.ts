@@ -7,15 +7,16 @@ import { SectionModule } from './section/section.module';
 import { TrxModule } from './trx/trx.module';
 import { ConfigModule } from '@nestjs/config';
 import emailConfig from './config/emailConfig';
-import dbConfig from './config/dbConfig';
+import { DBModule } from './lib/db/db.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
-      load: [emailConfig, dbConfig],
+      load: [emailConfig],
       isGlobal: true,
     }),
+    DBModule,
     WhooingEverydayModule,
     UserModule,
     SectionModule,
