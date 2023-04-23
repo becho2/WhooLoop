@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/swagger';
 import { TrxEntity } from '../entities/trx.entity';
 
 export class CreateTrxDto extends PickType(TrxEntity, [

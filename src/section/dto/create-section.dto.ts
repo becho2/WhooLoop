@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/swagger';
 import { SectionEntity } from '../entities/section.entity';
 
 export class CreateSectionDto extends PickType(SectionEntity, [
