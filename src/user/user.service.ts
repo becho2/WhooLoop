@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,10 +13,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     await this.checkUserExists(createUserDto.email);
-    createUserDto.password = await bcrypt.hash(
-      createUserDto.password.trim(),
-      12,
-    );
+    createUserDto.password = await bcrypt.hash(createUserDto.password, 12);
     return this.dbService.db.insert(createUserDto).into(this.userTable);
   }
 

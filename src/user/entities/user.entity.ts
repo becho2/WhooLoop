@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDate, Length } from 'class-validator';
+import { IsDate, IsEmail, Length } from 'class-validator';
 
 export class UserEntity {
   /** userIdx */
@@ -18,6 +18,7 @@ export class UserEntity {
     required: true,
   })
   @Expose()
+  @IsEmail()
   @Length(1, 50)
   email: string;
 
