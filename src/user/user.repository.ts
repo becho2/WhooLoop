@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,8 +23,17 @@ export class UserRepository {
       .select('user_idx')
       .where('email', email)
       .from<UserEntity>('users');
-    const [rows] = await sql;
-    return rows;
+    const [row] = await sql;
+    return row;
+  }
+
+  async findOneOrFail(idx: number): Promise<UserEntity> {
+    const sql = this.dbService.db
+      .select('user_idx', 'email')
+      .where('user_idx', idx)
+      .from<UserEntity>('users');
+    const [row] = await sql;
+    return row;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
