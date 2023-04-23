@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = 3000;
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('NODE_PORT');
   const config = new DocumentBuilder()
     .setTitle('Whooing Everyday API')
     .setDescription('API documentation')
