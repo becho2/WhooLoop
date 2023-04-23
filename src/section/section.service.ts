@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
+import { SectionRepository } from '../lib/repositories/section.repository';
 
 @Injectable()
 export class SectionService {
+  constructor(private sectionRepository: SectionRepository) {}
   create(createSectionDto: CreateSectionDto) {
     return 'This action adds a new section';
   }
