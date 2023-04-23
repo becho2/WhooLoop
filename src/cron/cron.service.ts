@@ -12,11 +12,11 @@ export class CronService {
   dailyCron() {
     const hoursMinutesNow = getHHmm();
     const trxList = this.trxRepository.findTrxListByTime(hoursMinutesNow);
-    trxList.forEach((trx) => {
-      trx.entry_date = getToday();
-      trx.memo = getNow() + '에 매일의 후잉을 통해 입력되었습니다.';
-      this.sendWhooingInput(trx.webhook_url, trx);
-    });
+    // trxList.forEach((trx) => {
+    //   trx.entry_date = getToday();
+    //   trx.memo = getNow() + '에 매일의 후잉을 통해 입력되었습니다.';
+    //   this.sendWhooingInput(trx.webhook_url, trx);
+    // });
   }
 
   // whooing으로 입력할 값 전송
