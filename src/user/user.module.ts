@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { DBModule } from '../lib/db/db.module';
-import { UserRepository } from './user.repository';
+import { UserRepository } from '../lib/repositories/user.repository';
 
 @Module({
   imports: [DBModule],

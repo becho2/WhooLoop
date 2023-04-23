@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRepository } from './user.repository';
+import { UserRepository } from '../lib/repositories/user.repository';
 
 @Injectable()
 export class UserService {

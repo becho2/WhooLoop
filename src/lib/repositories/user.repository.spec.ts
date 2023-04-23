@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DBModule } from '../lib/db/db.module';
+import { DBModule } from '../db/db.module';
 import { UserRepository } from './user.repository';
-import { CreateUserDto } from './dto/create-user.dto';
-import { BadRequestException } from '@nestjs/common';
 
-describe('UserService', () => {
+describe('UserRepository', () => {
   let repository: UserRepository;
 
   beforeEach(async () => {

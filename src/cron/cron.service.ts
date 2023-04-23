@@ -3,14 +3,15 @@ import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
 import { WhooingWebhookInputDto } from './dto/whooing-input-form.dto';
 import { getHHmm, getNow, getToday } from '../lib/date';
+import { TrxRepository } from '../lib/repositories/trx.repository';
 
 @Injectable()
 export class CronService {
-  constructor(private readonly trxRepository: TrxRespository) {}
+  constructor(private readonly trxRepository: TrxRepository) {}
   @Cron('0 */5 * * * *') // 5분마다 실행
   dailyCron() {
     const hoursMinutesNow = getHHmm();
-    const trxList = this.trxRespository.getTrxList(hoursMinutesNow);
+    const trxList = this.trxRepository.findTrxListByTime(hoursMinutesNow);
     trxList.forEach((trx) => {
       trx.entry_date = getToday();
       trx.memo = getNow() + '에 매일의 후잉을 통해 입력되었습니다.';
