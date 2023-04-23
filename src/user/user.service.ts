@@ -3,28 +3,22 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DBService } from '../lib/db/db.service';
 import { UserEntity } from './entities/user.entity';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  userTable = 'users';
-  constructor(private readonly dbService: DBService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto) {
     await this.checkUserExists(createUserDto.email);
     createUserDto.password = await bcrypt.hash(createUserDto.password, 12);
-    return this.dbService.db.insert(createUserDto).into(this.userTable);
+    return this.userRepository.create(createUserDto);
   }
 
   private async checkUserExists(email: string): Promise<boolean> {
-    const sql = this.dbService.db
-      .select('user_idx')
-      .where('email', email)
-      .from<UserEntity>('users');
-    const [rows] = await sql;
-
-    if (rows !== undefined && rows.user_idx > 0) {
+    const row = await this.userRepository.findOneByEmail(email);
+    if (row !== undefined && row.user_idx > 0) {
       throw new BadRequestException('Email already exists');
     } else {
       return true;
@@ -37,6 +31,10 @@ export class UserService {
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
+  }
+
+  findOneByEmail(email: string) {
+    return this.userRepository.findOneByEmail(email);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

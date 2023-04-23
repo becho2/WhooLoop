@@ -8,6 +8,12 @@ import { TrxModule } from './trx/trx.module';
 import { ConfigModule } from '@nestjs/config';
 import emailConfig from './config/emailConfig';
 import { DBModule } from './lib/db/db.module';
+import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from './user/user.repository';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,8 +27,9 @@ import { DBModule } from './lib/db/db.module';
     UserModule,
     SectionModule,
     TrxModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AuthController],
+  providers: [AppService, AuthService, UserService, JwtService, UserRepository],
 })
 export class AppModule {}
