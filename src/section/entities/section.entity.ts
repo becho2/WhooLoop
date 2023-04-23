@@ -18,6 +18,7 @@ export class SectionEntity {
     description: 'ownered user idx',
     required: true,
   })
+  @Length(1, 50)
   @Expose()
   user_idx: number;
 

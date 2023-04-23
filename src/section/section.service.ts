@@ -7,7 +7,7 @@ import { SectionRepository } from '../lib/repositories/section.repository';
 export class SectionService {
   constructor(private sectionRepository: SectionRepository) {}
   create(createSectionDto: CreateSectionDto) {
-    return 'This action adds a new section';
+    return this.sectionRepository.create(createSectionDto);
   }
 
   findAll() {
