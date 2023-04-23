@@ -8,6 +8,7 @@ import { TrxModule } from './trx/trx.module';
 import { ConfigModule } from '@nestjs/config';
 import { DBModule } from './lib/db/db.module';
 import { AuthModule } from './auth/auth.module';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
     TrxModule,
     DBModule,
     AuthModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],
