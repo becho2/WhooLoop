@@ -10,7 +10,9 @@ import {
 import { WhooingEverydayService } from './whooing-everyday.service';
 import { CreateWhooingEverydayDto } from './dto/create-whooing-everyday.dto';
 import { UpdateWhooingEverydayDto } from './dto/update-whooing-everyday.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('whooing-everyday')
 @Controller('whooing-everyday')
 export class WhooingEverydayController {
   constructor(
