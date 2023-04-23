@@ -36,23 +36,23 @@ export class TrxEntity {
   @ApiProperty({
     type: 'string',
     description: '요청을 반복할 요일(d: 매일, 1~7: 월~일요일)',
-    required: false,
+    example: 'd',
+    required: true,
   })
   @Expose()
-  @IsOptional()
-  @Length(1, 1)
-  request_day_of_week?: string;
+  @Length(1)
+  request_day_of_week: string;
 
   /** 요청을 보낼 시간 HHmm */
   @ApiProperty({
     type: 'string',
     description: '요청을 보낼 시간 HHmm',
-    required: false,
+    example: '1530',
+    required: true,
   })
   @Expose()
-  @IsOptional()
-  @Length(1, 4)
-  request_time?: string;
+  @Length(4)
+  request_time: string;
 
   /** 후잉 item 입력값 */
   @ApiProperty({
