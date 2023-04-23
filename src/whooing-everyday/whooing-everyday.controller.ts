@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WhooingEverydayService } from './whooing-everyday.service';
 import { CreateWhooingEverydayDto } from './dto/create-whooing-everyday.dto';
 import { UpdateWhooingEverydayDto } from './dto/update-whooing-everyday.dto';
 
 @Controller('whooing-everyday')
 export class WhooingEverydayController {
-  constructor(private readonly whooingEverydayService: WhooingEverydayService) {}
+  constructor(
+    private readonly whooingEverydayService: WhooingEverydayService,
+  ) {}
 
   @Post()
   create(@Body() createWhooingEverydayDto: CreateWhooingEverydayDto) {
@@ -23,7 +33,10 @@ export class WhooingEverydayController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWhooingEverydayDto: UpdateWhooingEverydayDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateWhooingEverydayDto: UpdateWhooingEverydayDto,
+  ) {
     return this.whooingEverydayService.update(+id, updateWhooingEverydayDto);
   }
 

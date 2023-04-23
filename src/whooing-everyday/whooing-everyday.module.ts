@@ -4,6 +4,6 @@ import { WhooingEverydayController } from './whooing-everyday.controller';
 
 @Module({
   controllers: [WhooingEverydayController],
-  providers: [WhooingEverydayService]
+  providers: [WhooingEverydayService],
 })
 export class WhooingEverydayModule {}

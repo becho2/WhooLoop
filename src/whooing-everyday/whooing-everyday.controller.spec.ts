@@ -11,7 +11,9 @@ describe('WhooingEverydayController', () => {
       providers: [WhooingEverydayService],
     }).compile();
 
-    controller = module.get<WhooingEverydayController>(WhooingEverydayController);
+    controller = module.get<WhooingEverydayController>(
+      WhooingEverydayController,
+    );
   });
 
   it('should be defined', () => {
