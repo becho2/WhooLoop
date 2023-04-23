@@ -9,7 +9,6 @@ export class UserEntity {
     description: 'userIdx',
     required: true,
   })
-  @Expose()
   user_idx: number;
 
   /** email */
@@ -28,8 +27,7 @@ export class UserEntity {
     description: 'password',
     required: true,
   })
-  @Expose()
-  @Length(1, 255)
+  @Length(6, 255)
   password: string;
 
   /** isDeleted */
@@ -39,8 +37,7 @@ export class UserEntity {
     example: 'N',
     required: true,
   })
-  @Expose()
-  @Length(1, 1)
+  @Length(1)
   is_deleted: string;
 
   @IsDate()
