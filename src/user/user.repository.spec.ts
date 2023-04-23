@@ -1,21 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
 import { DBModule } from '../lib/db/db.module';
 import { UserRepository } from './user.repository';
+import { CreateUserDto } from './dto/create-user.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UserService', () => {
-  let service: UserService;
+  let repository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule],
-      providers: [UserService, UserRepository],
+      providers: [UserRepository],
     }).compile();
 
-    service = module.get<UserService>(UserService);
+    repository = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(repository).toBeDefined();
   });
 });
