@@ -7,6 +7,7 @@ import { SectionModule } from './section/section.module';
 import { TrxModule } from './trx/trx.module';
 import { ConfigModule } from '@nestjs/config';
 import { DBModule } from './lib/db/db.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DBModule } from './lib/db/db.module';
     SectionModule,
     TrxModule,
     DBModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
