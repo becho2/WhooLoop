@@ -8,6 +8,14 @@ export function getToday(): string {
   return year + month + day;
 }
 
+export function getHHmm(): string {
+  const date = new Date();
+  const hours = ('0' + date.getHours()).slice(-2);
+  const minutes = ('0' + date.getMinutes()).slice(-2);
+
+  return hours + minutes;
+}
+
 // Returns current date string format YYYYMMDDHHMMSS
 export function getNow(): string {
   const date = new Date();
