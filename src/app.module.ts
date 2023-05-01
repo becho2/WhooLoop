@@ -10,6 +10,13 @@ import { DBModule } from './lib/db/db.module';
 import { AuthModule } from './auth/auth.module';
 import dbConfig from './config/dbConfig';
 import { DBService } from './lib/db/db.service';
+import emailConfig from './config/emailConfig';
+import { CronModule } from './cron/cron.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from './lib/repositories/user.repository';
 
 @Module({
   imports: [

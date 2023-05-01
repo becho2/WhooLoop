@@ -4,8 +4,8 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { UserRepository } from './user.repository';
 import { DBService } from '../lib/db/db.service';
+import { UserRepository } from '../lib/repositories/user.repository';
 
 @Injectable()
 export class UserService {
