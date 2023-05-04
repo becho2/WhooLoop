@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { DBModule } from '../lib/db/db.module';
-import { BadRequestException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 
 describe('UserService', () => {

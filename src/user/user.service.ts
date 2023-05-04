@@ -3,12 +3,12 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  userTable = 'users';
+  constructor(private userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto) {
     await this.checkUserExists(createUserDto.email);
@@ -17,8 +17,8 @@ export class UserService {
   }
 
   private async checkUserExists(email: string): Promise<boolean> {
-    const row = await this.userRepository.findOneByEmail(email);
-    if (row !== undefined && row.user_idx > 0) {
+    const rows = await this.userRepository.findOneByEmail(email);
+    if (rows !== undefined && rows.user_idx > 0) {
       throw new BadRequestException('Email already exists');
     } else {
       return true;
