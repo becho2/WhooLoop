@@ -7,6 +7,11 @@ import { SectionModule } from './section/section.module';
 import { TrxModule } from './trx/trx.module';
 import { ConfigModule } from '@nestjs/config';
 import { DBModule } from './lib/db/db.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from './user/user.repository';
 
 @Module({
   imports: [
