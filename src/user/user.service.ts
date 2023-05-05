@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -29,12 +30,16 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(idx: number): Promise<UserEntity> {
+    return await this.userRepository.findOne(idx);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneByEmail(email: string) {
+    return await this.userRepository.findOneByEmail(email);
+  }
+
+  update(idx: number, updateUserDto: UpdateUserDto): string {
+    return `This action updates a #${idx} user`;
   }
 
   remove(id: number) {

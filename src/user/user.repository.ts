@@ -18,9 +18,18 @@ export class UserRepository {
     return `This action returns all user`;
   }
 
+  async findOne(idx: number) {
+    const sql = this.dbService.db
+      .select('user_email')
+      .where('user_idx', idx)
+      .from<UserEntity>('users');
+    const [rows] = await sql;
+    return rows;
+  }
+
   async findOneByEmail(email: string): Promise<UserEntity> {
     const sql = this.dbService.db
-      .select('user_idx')
+      .select('user_idx', 'password')
       .where('email', email)
       .from<UserEntity>('users');
     const [rows] = await sql;
