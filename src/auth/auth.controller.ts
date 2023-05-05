@@ -2,12 +2,9 @@ import {
   Body,
   Controller,
   Post,
-  Request,
   UnprocessableEntityException,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
 import { LoginRequestDto } from './login-request.dto';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
