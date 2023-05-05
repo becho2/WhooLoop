@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   login(loginRequestDto: LoginRequestDto): string {
-    this.userService.findOneByEmail(loginRequestDto.email);
+    // this.userService.findOneByEmail(loginRequestDto.email);
     return 'acessToken';
     // return {
     //   access_token: this.jwtService.sign(loginRequestDto),
