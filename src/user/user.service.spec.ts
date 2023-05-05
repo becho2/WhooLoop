@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { DBModule } from '../lib/db/db.module';
 import { UserRepository } from './user.repository';
+import { BadRequestException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UserService', () => {
   let service: UserService;

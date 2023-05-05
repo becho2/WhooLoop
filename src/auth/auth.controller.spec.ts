@@ -1,16 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserService } from 'src/user/user.service';
-import { UserRepository } from 'src/user/user.repository';
+import { JwtService } from '@nestjs/jwt';
+import { DBModule } from '../lib/db/db.module';
+import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 
 describe('AuthController', () => {
   let controller: AuthController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [DBModule],
       controllers: [AuthController],
-      providers: [AuthService, UserService, UserRepository],
+      providers: [AuthService, JwtService, UserService, UserRepository],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);

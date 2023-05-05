@@ -9,7 +9,7 @@ import {
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { LoginRequestDto } from './login-request.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 
 @Controller('auth')
