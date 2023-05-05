@@ -48,7 +48,7 @@ export class UserController {
     return this.userService.findOne(idx);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwtAccessGuard'))
   @Patch(':idx')
   update(@Param('idx') idx: string, @Body() updateUserDto: UpdateUserDto) {
     // 파라미터 앞에 +를 붙여 string으로 들어온 idx값을 int(number)로 변경
