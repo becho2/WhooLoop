@@ -24,8 +24,8 @@
 
 ## Description
 
-[Whooing](https://whooing.com) 가계부의 종착지 whooing 복식부기 가계부
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Whooing - [Whooing](https://whooing.com) 가계부의 종착지 whooing 복식부기 가계부
+- nestjs를 이용한 whooing 가계부 반복 자동입력 웹앱
 
 ## Installation
 
