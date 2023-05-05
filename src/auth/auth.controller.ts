@@ -19,7 +19,6 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  // @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Body() loginRequestDto: LoginRequestDto): Promise<string> {
     const email = loginRequestDto.email;
