@@ -72,3 +72,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## References
+
+- https://medium.com/js-dojo/how-to-serve-vue-with-nest-f23f10b33e1
