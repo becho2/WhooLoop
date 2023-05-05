@@ -41,8 +41,8 @@ export class UserController {
     description: 'Get a user successfully',
     isArray: false,
   })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findOne(id);
+  findOne(@Param('idx', ParseIntPipe) idx: number) {
+    return this.userService.findOne(idx);
   }
 
   @Patch(':id')
