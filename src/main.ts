@@ -28,6 +28,11 @@ async function bootstrap() {
     }),
   );
 
+  /**
+   * 위 <NestExpressApplication>, 아래 3줄
+   * hbs(handlebars) 사용을 위한 코드
+   * https://docs.nestjs.com/techniques/mvc
+   */
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
