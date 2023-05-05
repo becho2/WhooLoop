@@ -1,8 +1,8 @@
 {
   "name": "whooing-everyday",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "You can automatically insert transactions into whooing daily or weekly",
+  "author": "Jinhoe",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
