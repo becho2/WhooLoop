@@ -1,7 +1,10 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 
-class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwtAccessGuard') {
+export class JwtAccessStrategy extends PassportStrategy(
+  Strategy,
+  'jwtAccessGuard',
+) {
   /**
    * PassportStrategy extends시
    * 1st param: 무엇으로 인증할 것인지
@@ -23,7 +26,6 @@ class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwtAccessGuard') {
    * 인가 통과 뒤에 req.user.email, req.uesr.idx 등으로 validate()에서 return한 데이터들을 쓸 수 있게 됨
    */
   validate(payload) {
-    console.log(payload);
     return { email: payload.email, idx: payload.user_idx };
   }
 }

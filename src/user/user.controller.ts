@@ -10,12 +10,12 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserEntity } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('user')
@@ -45,18 +45,18 @@ export class UserController {
   })
   findOne(@Param('idx', ParseIntPipe) idx: number) {
     // ParseIntPipe를 이용해 string으로 들어온 idx값을 int(number)로 변경
-    return this.userService.findOne(idx);
+    return this.userService.findOne(+idx);
   }
 
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  @Patch(':idx')
-  update(@Param('idx') idx: string, @Body() updateUserDto: UpdateUserDto) {
-    // 파라미터 앞에 +를 붙여 string으로 들어온 idx값을 int(number)로 변경
-    return this.userService.update(+idx, updateUserDto);
+  @Patch()
+  update(@Request() req: any, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(req.user.idx, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Delete(':idx')
+  remove(@Param('idx') idx: string) {
+    // 또는 파라미터 앞에 +를 붙여 string으로 들어온 idx값을 int(number)로 변경 가능
+    return this.userService.remove(+idx);
   }
 }

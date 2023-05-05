@@ -22,7 +22,8 @@ export class AuthController {
   // @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Body() loginRequestDto: LoginRequestDto): Promise<string> {
-    const user = await this.userService.findOneByEmail(loginRequestDto.email);
+    const email = loginRequestDto.email;
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new UnprocessableEntityException(
         '해당 Email이 회원 목록에 존재하지 않습니다.(The email does not exist in user list.)',
@@ -38,7 +39,6 @@ export class AuthController {
         '비밀번호가 틀렸습니다.(The password is not correct.)',
       );
     }
-
-    return this.authService.getAccessToken(user);
+    return this.authService.getAccessToken(email, user.user_idx);
   }
 }

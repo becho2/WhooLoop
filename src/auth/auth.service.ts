@@ -23,9 +23,9 @@ export class AuthService {
     return null;
   }
 
-  getAccessToken(user: UserEntity): string {
+  getAccessToken(email: string, userIdx: number): string {
     return this.jwtService.sign(
-      { email: user.email, idx: user.user_idx },
+      { email: email, user_idx: userIdx },
       {
         secret: 'accessKeyOfDailyWhooing',
         expiresIn: '1h',
