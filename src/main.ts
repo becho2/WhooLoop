@@ -16,11 +16,16 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
+  // nestjs app내 api들의 url경로를 전부 /api/* 로 변경
+  app.setGlobalPrefix('api');
+
   // config를 바탕으로 swagger document 생성
   const document = SwaggerModule.createDocument(app, config);
-  // Swagger UI에 대한 path를 연결함
-  // .setup('swagger ui endpoint', app, swagger_document)
-  SwaggerModule.setup('docs', app, document);
+  /**
+   * Swagger UI에 대한 path를 연결함
+   * .setup('swagger ui endpoint', app, swagger_document)
+   */
+  SwaggerModule.setup('api/docs', app, document);
 
   app.useGlobalPipes(
     new ValidationPipe({
