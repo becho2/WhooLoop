@@ -38,8 +38,8 @@ export class UserService {
     return await this.userRepository.findOneByEmail(email);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(idx: number, updateUserDto: UpdateUserDto): string {
+    return `This action updates a #${idx} user`;
   }
 
   remove(id: number) {
