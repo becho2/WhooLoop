@@ -39,6 +39,6 @@ export class AuthController {
       );
     }
 
-    return this.authService.getAccessToken();
+    return this.authService.getAccessToken(user);
   }
 }

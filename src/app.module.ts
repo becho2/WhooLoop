@@ -12,9 +12,11 @@ import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from './user/user.repository';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: [`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
       isGlobal: true,
@@ -26,7 +28,7 @@ import { UserRepository } from './user/user.repository';
     TrxModule,
     DBModule,
   ],
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService, UserService, JwtService, UserRepository],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

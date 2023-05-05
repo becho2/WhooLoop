@@ -6,15 +6,10 @@ import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
 import { UserService } from '../user/user.service';
 import { UserRepository } from 'src/user/user.repository';
+import { DBModule } from 'src/lib/db/db.module';
 
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: 'secretKey',
-      signOptions: { expiresIn: '60s' },
-    }),
-  ],
+  imports: [DBModule, PassportModule, JwtModule.register({})],
   providers: [AuthService, LocalStrategy, UserService, UserRepository],
   controllers: [AuthController],
 })
