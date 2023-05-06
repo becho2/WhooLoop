@@ -31,21 +31,23 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userService.findAll();
+  // }
 
-  @Get(':idx')
+  @Get()
   @ApiOperation({ summary: 'Get a user' })
   @ApiResponse({
     status: 200,
     description: 'Get a user successfully',
     isArray: false,
   })
-  findOne(@Param('idx', ParseIntPipe) idx: number) {
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  findOne(@Request() req: any) {
+    // findOne(@Param('idx', ParseIntPipe) idx: number) {
     // ParseIntPipe를 이용해 string으로 들어온 idx값을 int(number)로 변경
-    return this.userService.findOne(+idx);
+    return this.userService.findOne(req.user.idx);
   }
 
   @UseGuards(AuthGuard('jwtAccessGuard'))

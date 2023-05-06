@@ -20,7 +20,7 @@ export class UserRepository {
 
   async findOne(idx: number) {
     const sql = this.dbService.db
-      .select('user_email')
+      .select('email')
       .where('user_idx', idx)
       .from<UserEntity>('users');
     const [rows] = await sql;
