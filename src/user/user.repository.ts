@@ -36,8 +36,11 @@ export class UserRepository {
     return rows;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(idx: number, updateUserDto: UpdateUserDto) {
+    return this.dbService
+      .db(this.userTable)
+      .where('user_idx', idx)
+      .update(updateUserDto);
   }
 
   remove(id: number) {
