@@ -39,6 +39,8 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
+  // 같은 서버 내에 존재하는 Vue front app에서 api호출하기 위한 CORS 허용
+  app.enableCors();
   await app.listen(port);
 }
 bootstrap();
