@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { SectionService } from './section.service';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('section')
 @Controller('section')
@@ -23,8 +26,15 @@ export class SectionController {
   }
 
   @Get()
-  findAll() {
-    return this.sectionService.findAll();
+  @ApiOperation({ summary: 'Get all sections of a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Get sections successfully',
+    isArray: true,
+  })
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  findAll(@Request() req: any) {
+    return this.sectionService.findAll(req.user.idx);
   }
 
   @Get(':id')

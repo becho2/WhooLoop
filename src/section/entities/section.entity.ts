@@ -41,6 +41,14 @@ export class SectionEntity {
   @Length(1, 60)
   whooing_webhook_url: string;
 
+  @ApiProperty({
+    type: 'number',
+    description: 'section sorting order number',
+    required: true,
+  })
+  @Expose()
+  sort_no: number;
+
   /** isDeleted */
   @ApiProperty({
     type: 'string',

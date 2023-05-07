@@ -22,7 +22,7 @@ export class UserRepository {
     const sql = this.dbService.db
       .select('email')
       .where('user_idx', idx)
-      .from<UserEntity>('users');
+      .from<UserEntity>(this.userTable);
     const [rows] = await sql;
     return rows;
   }
@@ -31,7 +31,7 @@ export class UserRepository {
     const sql = this.dbService.db
       .select('user_idx', 'password')
       .where('email', email)
-      .from<UserEntity>('users');
+      .from<UserEntity>(this.userTable);
     const [rows] = await sql;
     return rows;
   }
