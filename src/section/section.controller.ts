@@ -21,7 +21,15 @@ export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
 
   @Post()
-  create(@Body() createSectionDto: CreateSectionDto) {
+  @ApiOperation({ summary: 'Create a section' })
+  @ApiResponse({
+    status: 201,
+    description: 'Create a section',
+    isArray: false,
+  })
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  create(@Request() req: any, @Body() createSectionDto: CreateSectionDto) {
+    createSectionDto.user_idx = req.user.idx;
     return this.sectionService.create(createSectionDto);
   }
 

@@ -8,7 +8,8 @@ export class SectionService {
   constructor(private readonly sectionRepository: SectionRepository) {}
 
   create(createSectionDto: CreateSectionDto) {
-    return 'This action adds a new section';
+    createSectionDto.sort_no = 1;
+    return this.sectionRepository.create(createSectionDto);
   }
 
   findAll(userIdx: number) {
