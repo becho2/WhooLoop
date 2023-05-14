@@ -15,19 +15,13 @@ export class SectionRepository {
 
   async findAll(userIdx: number) {
     const sql = this.dbService.db
-      .select(
-        'section_idx',
-        'section_name',
-        'whooing_webhook_url',
-        'sort_no',
-        'created',
-      )
+      .select('section_idx', 'section_name', 'whooing_webhook_url', 'created')
       .where({
         user_idx: userIdx,
         is_deleted: 'N',
       })
       .from<SectionEntity>(this.sectionTable);
-    const [rows] = await sql;
+    const rows = await sql;
     return rows;
   }
 
