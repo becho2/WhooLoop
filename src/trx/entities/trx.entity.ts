@@ -104,13 +104,13 @@ export class TrxEntity {
 
   /** 후잉 거래 메모 */
   @ApiProperty({
-    type: 'number',
+    type: 'text',
     description: '후잉 거래 메모',
     required: false,
   })
   @Expose()
   @IsOptional()
-  transaction_memo?: number;
+  transaction_memo?: string;
 
   /** workStatus */
   @ApiProperty({
