@@ -4,6 +4,7 @@ import { DBService } from '../lib/db/db.service';
 import { TrxEntity } from './entities/trx.entity';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
+import { WhooingInputData } from 'src/whooing-everyday/dto/whooing-input-form.dto';
 
 @Injectable()
 export class TrxRepository {
@@ -32,6 +33,28 @@ export class TrxRepository {
       )
       .where({
         user_idx: userIdx,
+        is_deleted: 'N',
+      })
+      .from<TrxEntity>(this.trxTable);
+    const rows = await sql;
+    return rows;
+  }
+
+  async findByTime(requestDayOfWeek: number, requestTime: string) {
+    const sql = this.dbService.db
+      .select(
+        'transaction_idx',
+        'transaction_item',
+        'transaction_money_amount',
+        'transaction_left',
+        'transaction_right',
+        'transaction_memo',
+        'section_webhook_url',
+      )
+      .whereIn('request_day_of_week', [requestDayOfWeek, 'd'])
+      .where({
+        request_time: requestTime,
+        work_status: 'ON',
         is_deleted: 'N',
       })
       .from<TrxEntity>(this.trxTable);
