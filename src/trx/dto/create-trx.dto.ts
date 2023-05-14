@@ -7,8 +7,10 @@ export class CreateTrxDto extends PickType(TrxEntity, [
   'request_time',
   'transaction_nickname',
   'transaction_item',
-  'transaction_money',
+  'transaction_money_amount',
   'transaction_left',
   'transaction_right',
   'transaction_memo',
-]) {}
+]) {
+  user_idx: number;
+}

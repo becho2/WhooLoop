@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { TrxService } from './trx.service';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('trx')
 @Controller('trx')
@@ -18,26 +21,32 @@ export class TrxController {
   constructor(private readonly trxService: TrxService) {}
 
   @Post()
-  create(@Body() createTrxDto: CreateTrxDto) {
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  create(@Request() req: any, @Body() createTrxDto: CreateTrxDto) {
+    createTrxDto.user_idx = req.user.idx;
     return this.trxService.create(createTrxDto);
   }
 
   @Get()
-  findAll() {
-    return this.trxService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.trxService.findOne(+id);
+  @ApiOperation({ summary: 'Get all transactions of a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Get sections successfully',
+    isArray: true,
+  })
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  findAll(@Request() req: any) {
+    return this.trxService.findAll(req.user.idx);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
   update(@Param('id') id: string, @Body() updateTrxDto: UpdateTrxDto) {
     return this.trxService.update(+id, updateTrxDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
   remove(@Param('id') id: string) {
     return this.trxService.remove(+id);
   }

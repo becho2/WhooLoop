@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDate, IsOptional, Length } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, Length } from 'class-validator';
 
 export class TrxEntity {
   /** transactionIdx */
@@ -11,6 +11,15 @@ export class TrxEntity {
   })
   @Expose()
   transaction_idx: number;
+
+  /** owner's user idx */
+  @ApiProperty({
+    type: 'number',
+    description: 'owner user idx',
+    required: true,
+  })
+  @Expose()
+  user_idx: number;
 
   /** related section idx */
   @ApiProperty({
@@ -71,7 +80,7 @@ export class TrxEntity {
     required: true,
   })
   @Expose()
-  transaction_money: number;
+  transaction_money_amount: number;
 
   /** 후잉 좌변(비용) */
   @ApiProperty({
@@ -103,15 +112,26 @@ export class TrxEntity {
   @IsOptional()
   transaction_memo?: number;
 
+  /** workStatus */
+  @ApiProperty({
+    type: 'string',
+    description: '현재 작동 여부',
+    example: 'ON',
+    required: true,
+  })
+  @Expose()
+  @IsEnum(['ON', 'OFF'])
+  work_status: string;
+
   /** isDeleted */
   @ApiProperty({
     type: 'string',
-    description: 'isDeleted',
+    description: '삭제 여부',
     example: 'N',
     required: true,
   })
   @Expose()
-  @Length(1, 1)
+  @IsEnum(['Y', 'N'])
   is_deleted: string;
 
   @IsDate()
