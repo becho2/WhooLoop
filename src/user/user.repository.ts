@@ -10,7 +10,7 @@ export class UserRepository {
   userTable = 'users';
   constructor(private readonly dbService: DBService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.dbService.db.insert(createUserDto).into(this.userTable);
   }
 

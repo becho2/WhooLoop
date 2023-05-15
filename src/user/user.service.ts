@@ -11,7 +11,7 @@ export class UserService {
   userTable = 'users';
   constructor(private userRepository: UserRepository) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     await this.checkUserExists(createUserDto.email);
     createUserDto.password = await bcrypt.hash(createUserDto.password, 12);
     return this.userRepository.create(createUserDto);
