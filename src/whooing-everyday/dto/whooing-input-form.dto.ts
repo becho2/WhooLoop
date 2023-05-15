@@ -1,6 +1,12 @@
 export class WhooingInputData {
+  transaction_idx: number;
   webhook_url: string;
-  input_form: WhooingInputForm;
+  entry_date: string;
+  item: string;
+  money: number;
+  left: string;
+  right: string;
+  memo?: string;
 }
 
 export class WhooingInputForm {

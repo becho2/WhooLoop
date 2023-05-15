@@ -1,14 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { DBService } from '../lib/db/db.service';
 import { TrxEntity } from './entities/trx.entity';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
-import { WhooingInputData } from 'src/whooing-everyday/dto/whooing-input-form.dto';
+import { ViewTimeDataListEntity } from '../whooing-everyday/entities/view-time-data-list.entity';
 
 @Injectable()
 export class TrxRepository {
   trxTable = 'transactions';
+  timeView = 'view_time_data_list';
   constructor(private readonly dbService: DBService) {}
   async create(createTrxDto: CreateTrxDto) {
     return this.dbService.db.insert(createTrxDto).into(this.trxTable);
@@ -40,24 +41,25 @@ export class TrxRepository {
     return rows;
   }
 
-  async findByTime(requestDayOfWeek: number, requestTime: string) {
+  async findByTime(
+    requestDayOfWeek: number,
+    requestTime: string,
+  ): Promise<ViewTimeDataListEntity[]> {
     const sql = this.dbService.db
       .select(
         'transaction_idx',
+        'webhook_url',
         'transaction_item',
         'transaction_money_amount',
         'transaction_left',
         'transaction_right',
         'transaction_memo',
-        'section_webhook_url',
       )
       .whereIn('request_day_of_week', [requestDayOfWeek, 'd'])
       .where({
         request_time: requestTime,
-        work_status: 'ON',
-        is_deleted: 'N',
       })
-      .from<TrxEntity>(this.trxTable);
+      .from(this.timeView);
     const rows = await sql;
     return rows;
   }
