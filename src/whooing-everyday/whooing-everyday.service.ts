@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { getNow, getToday } from '../lib/helper';
+import { getHHmm, getNow, getToday } from '../lib/helper';
 import {
   WhooingInputData,
   WhooingInputForm,
@@ -17,9 +17,8 @@ export class WhooingEverydayService {
     private readonly logRepository: LogRepository,
   ) {}
 
-  @Cron('* * * * * *') // 매분 5초마다
+  @Cron('5 * * * * *') // 매분 5초마다
   async cronByMinute() {
-    console.log('hello world');
     const dataList: WhooingInputData[] = await this._getDataListByTime();
     if (dataList.length > 0) {
       dataList.forEach((data) => {
@@ -29,11 +28,6 @@ export class WhooingEverydayService {
         this._sendWhooingInput(data);
       });
     }
-  }
-
-  @Cron('* * * * * *')
-  consoleLog() {
-    console.log('hel');
   }
 
   // whooing으로 입력할 값 전송
@@ -80,7 +74,7 @@ export class WhooingEverydayService {
   private async _getDataListByTime(): Promise<WhooingInputData[]> {
     const date = new Date();
     const dayOfWeek = date.getDay();
-    const timeNow = getNow();
+    const timeNow = getHHmm();
     const result = await this.trxRepository.findByTime(dayOfWeek, timeNow);
 
     const whooingInputDataList: WhooingInputData[] = [];

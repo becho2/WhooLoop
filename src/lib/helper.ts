@@ -20,3 +20,12 @@ export function getNow(): string {
 
   return year + month + day + hours + minutes + seconds;
 }
+
+// Returns current date string format HHmm
+export function getHHmm(): string {
+  const date = new Date();
+  const hours = ('0' + date.getHours()).slice(-2);
+  const minutes = ('0' + date.getMinutes()).slice(-2);
+
+  return hours + minutes;
+}
