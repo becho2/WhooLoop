@@ -76,13 +76,17 @@ export class TrxRepository {
   async update(idx: number, updateTrxDto: UpdateTrxDto) {
     return this.dbService
       .db(this.trxTable)
-      .where('trx_idx', idx)
+      .where('transaction_idx', idx)
       .update(updateTrxDto);
   }
 
-  remove(idx: number) {
-    return this.dbService.db(this.trxTable).where({ trx_idx: idx }).update({
-      is_deleted: 'Y',
-    });
+  async remove(idx: number, userIdx: number): Promise<boolean> {
+    await this.dbService
+      .db(this.trxTable)
+      .where({ transaction_idx: idx, user_idx: userIdx })
+      .update({
+        is_deleted: 'Y',
+      });
+    return true;
   }
 }

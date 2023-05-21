@@ -18,7 +18,7 @@ export class TrxService {
     return this.trxRepository.update(idx, updateTrxDto);
   }
 
-  remove(trxIdx: number) {
-    return this.trxRepository.remove(trxIdx);
+  async remove(trxIdx: number, userIdx: number): Promise<boolean> {
+    return await this.trxRepository.remove(trxIdx, userIdx);
   }
 }

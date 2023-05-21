@@ -45,9 +45,9 @@ export class TrxController {
     return this.trxService.update(+id, updateTrxDto);
   }
 
-  @Delete(':id')
+  @Delete(':idx')
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  remove(@Param('id') id: string) {
-    return this.trxService.remove(+id);
+  async remove(@Param('idx') idx: string, @Request() req: any) {
+    return await this.trxService.remove(+idx, req.user.idx);
   }
 }
