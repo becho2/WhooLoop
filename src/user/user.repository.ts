@@ -10,7 +10,7 @@ export class UserRepository {
   userTable = 'users';
   constructor(private readonly dbService: DBService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.dbService.db.insert(createUserDto).into(this.userTable);
   }
 
@@ -20,9 +20,9 @@ export class UserRepository {
 
   async findOne(idx: number) {
     const sql = this.dbService.db
-      .select('user_email')
+      .select('email')
       .where('user_idx', idx)
-      .from<UserEntity>('users');
+      .from<UserEntity>(this.userTable);
     const [rows] = await sql;
     return rows;
   }
@@ -31,13 +31,16 @@ export class UserRepository {
     const sql = this.dbService.db
       .select('user_idx', 'password')
       .where('email', email)
-      .from<UserEntity>('users');
+      .from<UserEntity>(this.userTable);
     const [rows] = await sql;
     return rows;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(idx: number, updateUserDto: UpdateUserDto) {
+    return this.dbService
+      .db(this.userTable)
+      .where('user_idx', idx)
+      .update(updateUserDto);
   }
 
   remove(id: number) {

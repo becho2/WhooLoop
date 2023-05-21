@@ -18,8 +18,10 @@ async function bootstrap() {
 
   // config를 바탕으로 swagger document 생성
   const document = SwaggerModule.createDocument(app, config);
-  // Swagger UI에 대한 path를 연결함
-  // .setup('swagger ui endpoint', app, swagger_document)
+  /**
+   * Swagger UI에 대한 path를 연결함
+   * .setup('swagger ui endpoint', app, swagger_document)
+   */
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(
@@ -28,10 +30,17 @@ async function bootstrap() {
     }),
   );
 
+  /**
+   * 위 <NestExpressApplication>, 아래 3줄
+   * hbs(handlebars) 사용을 위한 코드
+   * https://docs.nestjs.com/techniques/mvc
+   */
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
+  // 같은 서버 내에 존재하는 Vue front app에서 api호출하기 위한 CORS 허용
+  app.enableCors();
   await app.listen(port);
 }
 bootstrap();

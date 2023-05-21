@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
+import { TrxRepository } from './trx.repository';
 
 @Injectable()
 export class TrxService {
+  constructor(private readonly trxRepository: TrxRepository) {}
   create(createTrxDto: CreateTrxDto) {
-    return 'This action adds a new trx';
+    return this.trxRepository.create(createTrxDto);
   }
 
-  findAll() {
-    return `This action returns all trx`;
+  findAll(userIdx: number) {
+    return this.trxRepository.findAll(userIdx);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} trx`;
+  update(
+    idx: number,
+    userIdx: number,
+    updateTrxDto: UpdateTrxDto,
+  ): Promise<boolean> {
+    return this.trxRepository.update(idx, userIdx, updateTrxDto);
   }
 
-  update(id: number, updateTrxDto: UpdateTrxDto) {
-    return `This action updates a #${id} trx`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} trx`;
+  async remove(trxIdx: number, userIdx: number): Promise<boolean> {
+    return await this.trxRepository.remove(trxIdx, userIdx);
   }
 }

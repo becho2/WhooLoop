@@ -11,7 +11,7 @@ export class UserService {
   userTable = 'users';
   constructor(private userRepository: UserRepository) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     await this.checkUserExists(createUserDto.email);
     createUserDto.password = await bcrypt.hash(createUserDto.password, 12);
     return this.userRepository.create(createUserDto);
@@ -38,8 +38,9 @@ export class UserService {
     return await this.userRepository.findOneByEmail(email);
   }
 
-  update(idx: number, updateUserDto: UpdateUserDto): string {
-    return `This action updates a #${idx} user`;
+  async update(idx: number, updateUserDto: UpdateUserDto) {
+    updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
+    return await this.userRepository.update(idx, updateUserDto);
   }
 
   remove(id: number) {

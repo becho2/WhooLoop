@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { SectionService } from './section.service';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('section')
 @Controller('section')
@@ -18,13 +21,28 @@ export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
 
   @Post()
-  create(@Body() createSectionDto: CreateSectionDto) {
+  @ApiOperation({ summary: 'Create a section' })
+  @ApiResponse({
+    status: 201,
+    description: 'Create a section',
+    isArray: false,
+  })
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  create(@Request() req: any, @Body() createSectionDto: CreateSectionDto) {
+    createSectionDto.user_idx = req.user.idx;
     return this.sectionService.create(createSectionDto);
   }
 
   @Get()
-  findAll() {
-    return this.sectionService.findAll();
+  @ApiOperation({ summary: 'Get all sections of a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Get sections successfully',
+    isArray: true,
+  })
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async findAll(@Request() req: any) {
+    return await this.sectionService.findAll(req.user.idx);
   }
 
   @Get(':id')
@@ -32,13 +50,21 @@ export class SectionController {
     return this.sectionService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSectionDto: UpdateSectionDto) {
-    return this.sectionService.update(+id, updateSectionDto);
+  @Patch(':idx')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  update(
+    @Param('idx') idx: string,
+    @Body() updateSectionDto: UpdateSectionDto,
+  ) {
+    return this.sectionService.update(+idx, updateSectionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sectionService.remove(+id);
+  @Delete(':idx')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async remove(
+    @Param('idx') idx: string,
+    @Request() req: any,
+  ): Promise<boolean> {
+    return await this.sectionService.remove(+idx, req.user.idx);
   }
 }

@@ -1,21 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TrxService } from './trx.service';
-import { TrxRepository } from './trx.repository';
 import { DBModule } from '../lib/db/db.module';
+import { SectionRepository } from './section.repository';
 
-describe('TrxService', () => {
-  let service: TrxService;
+describe('SectionRepository', () => {
+  let repository: SectionRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule],
-      providers: [TrxService, TrxRepository],
+      providers: [SectionRepository],
     }).compile();
 
-    service = module.get<TrxService>(TrxService);
+    repository = module.get<SectionRepository>(SectionRepository);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(repository).toBeDefined();
   });
 });
