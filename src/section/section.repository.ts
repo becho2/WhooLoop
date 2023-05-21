@@ -50,7 +50,12 @@ export class SectionRepository {
       .update(updateSectionDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(idx: number, userIdx: number) {
+    await this.dbService
+      .db(this.sectionTable)
+      .where({ section_idx: idx, user_idx: userIdx })
+      .update({ is_deleted: 'Y' });
+
+    return true;
   }
 }

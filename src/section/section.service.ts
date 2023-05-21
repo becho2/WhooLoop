@@ -29,7 +29,7 @@ export class SectionService {
     return `This action updates a #${id} section`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} section`;
+  async remove(idx: number, userIdx: number): Promise<boolean> {
+    return await this.sectionRepository.remove(idx, userIdx);
   }
 }

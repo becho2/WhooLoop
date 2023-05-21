@@ -50,13 +50,21 @@ export class SectionController {
     return this.sectionService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSectionDto: UpdateSectionDto) {
-    return this.sectionService.update(+id, updateSectionDto);
+  @Patch(':idx')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  update(
+    @Param('idx') idx: string,
+    @Body() updateSectionDto: UpdateSectionDto,
+  ) {
+    return this.sectionService.update(+idx, updateSectionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sectionService.remove(+id);
+  @Delete(':idx')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async remove(
+    @Param('idx') idx: string,
+    @Request() req: any,
+  ): Promise<boolean> {
+    return await this.sectionService.remove(+idx, req.user.idx);
   }
 }
