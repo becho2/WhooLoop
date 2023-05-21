@@ -41,8 +41,8 @@ export class SectionController {
     isArray: true,
   })
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  findAll(@Request() req: any) {
-    return this.sectionService.findAll(req.user.idx);
+  async findAll(@Request() req: any) {
+    return await this.sectionService.findAll(req.user.idx);
   }
 
   @Get(':id')

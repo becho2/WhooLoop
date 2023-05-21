@@ -13,7 +13,7 @@ export class SectionRepository {
     return this.dbService.db.insert(createSectionDto).into(this.sectionTable);
   }
 
-  async findAll(userIdx: number) {
+  async findAll(userIdx: number): Promise<SectionEntity[]> {
     const sql = this.dbService.db
       .select('section_idx', 'section_name', 'whooing_webhook_url', 'created')
       .where({

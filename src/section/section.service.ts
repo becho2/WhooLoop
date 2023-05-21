@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { SectionRepository } from './section.repository';
+import { SectionEntity } from './entities/section.entity';
 
 @Injectable()
 export class SectionService {
@@ -12,8 +13,12 @@ export class SectionService {
     return this.sectionRepository.create(createSectionDto);
   }
 
-  findAll(userIdx: number) {
-    return this.sectionRepository.findAll(userIdx);
+  async findAll(userIdx: number): Promise<SectionEntity[]> {
+    const sections = await this.sectionRepository.findAll(userIdx);
+    if (sections.length === 0) {
+      throw new NotFoundException('섹션이 존재하지 않습니다.');
+    }
+    return sections;
   }
 
   findOne(id: number) {
