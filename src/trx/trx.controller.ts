@@ -41,8 +41,12 @@ export class TrxController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  update(@Param('id') id: string, @Body() updateTrxDto: UpdateTrxDto) {
-    return this.trxService.update(+id, updateTrxDto);
+  async update(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() updateTrxDto: UpdateTrxDto,
+  ): Promise<boolean> {
+    return await this.trxService.update(+id, req.user.idx, updateTrxDto);
   }
 
   @Delete(':idx')

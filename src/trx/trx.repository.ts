@@ -29,8 +29,6 @@ export class TrxRepository {
         'transaction_right',
         'transaction_memo',
         'work_status',
-        'created',
-        'updated_last',
       )
       .where({
         user_idx: userIdx,
@@ -73,11 +71,17 @@ export class TrxRepository {
     return rows;
   }
 
-  async update(idx: number, updateTrxDto: UpdateTrxDto) {
-    return this.dbService
+  async update(
+    idx: number,
+    userIdx: number,
+    updateTrxDto: UpdateTrxDto,
+  ): Promise<boolean> {
+    await this.dbService
       .db(this.trxTable)
-      .where('transaction_idx', idx)
+      .where({ transaction_idx: idx, user_idx: userIdx })
       .update(updateTrxDto);
+
+    return true;
   }
 
   async remove(idx: number, userIdx: number): Promise<boolean> {

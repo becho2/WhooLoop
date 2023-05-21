@@ -14,8 +14,12 @@ export class TrxService {
     return this.trxRepository.findAll(userIdx);
   }
 
-  update(idx: number, updateTrxDto: UpdateTrxDto) {
-    return this.trxRepository.update(idx, updateTrxDto);
+  update(
+    idx: number,
+    userIdx: number,
+    updateTrxDto: UpdateTrxDto,
+  ): Promise<boolean> {
+    return this.trxRepository.update(idx, userIdx, updateTrxDto);
   }
 
   async remove(trxIdx: number, userIdx: number): Promise<boolean> {
