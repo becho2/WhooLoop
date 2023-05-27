@@ -10,11 +10,13 @@ export class SectionRepository {
   sectionTable = 'sections';
   constructor(private readonly dbService: DBService) {}
   async create(createSectionDto: CreateSectionDto) {
-    return this.dbService.db.insert(createSectionDto).into(this.sectionTable);
+    return this.dbService.mysql
+      .insert(createSectionDto)
+      .into(this.sectionTable);
   }
 
   async findAll(userIdx: number): Promise<SectionEntity[]> {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('section_idx', 'section_name', 'whooing_webhook_url', 'created')
       .where({
         user_idx: userIdx,
@@ -26,7 +28,7 @@ export class SectionRepository {
   }
 
   async findOne(idx: number) {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('email')
       .where('user_idx', idx)
       .from<SectionEntity>(this.sectionTable);
@@ -35,7 +37,7 @@ export class SectionRepository {
   }
 
   async findOneByEmail(email: string): Promise<SectionEntity> {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('user_idx', 'password')
       .where('email', email)
       .from<SectionEntity>(this.sectionTable);
@@ -45,14 +47,14 @@ export class SectionRepository {
 
   async update(idx: number, updateSectionDto: UpdateSectionDto) {
     return this.dbService
-      .db(this.sectionTable)
+      .mysql(this.sectionTable)
       .where('section_idx', idx)
       .update(updateSectionDto);
   }
 
   async remove(idx: number, userIdx: number) {
     await this.dbService
-      .db(this.sectionTable)
+      .mysql(this.sectionTable)
       .where({ section_idx: idx, user_idx: userIdx })
       .update({ is_deleted: 'Y' });
 

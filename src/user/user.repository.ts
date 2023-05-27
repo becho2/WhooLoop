@@ -11,7 +11,7 @@ export class UserRepository {
   constructor(private readonly dbService: DBService) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.dbService.db.insert(createUserDto).into(this.userTable);
+    return this.dbService.mysql.insert(createUserDto).into(this.userTable);
   }
 
   findAll() {
@@ -19,7 +19,7 @@ export class UserRepository {
   }
 
   async findOne(idx: number) {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('email')
       .where('user_idx', idx)
       .from<UserEntity>(this.userTable);
@@ -28,7 +28,7 @@ export class UserRepository {
   }
 
   async findOneByEmail(email: string): Promise<UserEntity> {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('user_idx', 'password')
       .where('email', email)
       .from<UserEntity>(this.userTable);
@@ -38,7 +38,7 @@ export class UserRepository {
 
   async update(idx: number, updateUserDto: UpdateUserDto) {
     return this.dbService
-      .db(this.userTable)
+      .mysql(this.userTable)
       .where('user_idx', idx)
       .update(updateUserDto);
   }

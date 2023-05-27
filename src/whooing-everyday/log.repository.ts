@@ -8,6 +8,6 @@ export class LogRepository {
 
   constructor(private readonly dbService: DBService) {}
   async create(logEntity: LogEntity): Promise<any> {
-    return this.dbService.db.insert(logEntity).into(this.logTable);
+    return this.dbService.mysql.insert(logEntity).into(this.logTable);
   }
 }

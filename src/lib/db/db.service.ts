@@ -5,10 +5,12 @@ import knex, { Knex } from 'knex';
 
 @Injectable()
 export class DBService {
-  db: Knex;
+  mysql: Knex;
+  oracle: Knex;
   constructor(
     @Inject(dbConfig.KEY) private config: ConfigType<typeof dbConfig>,
   ) {
-    this.db = knex(this.config.mysql.poolOptions);
+    this.mysql = knex(this.config.mysql.poolOptions);
+    this.oracle = knex(this.config.oracle.poolOptions);
   }
 }

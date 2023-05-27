@@ -23,4 +23,18 @@ export default registerAs('db', () => ({
       debug: process.env.NODE_ENV == 'development',
     },
   },
+  oracle: {
+    poolOptions: {
+      client: 'oracledb',
+      connection: {
+        host: process.env.ORACLE_HOST,
+        port: process.env.ORACLE_PORT,
+        user: process.env.ORACLE_USERNAME,
+        password: process.env.ORACLE_PASSWORD,
+        database: process.env.ORACLE_NAME,
+      },
+      fetchAsString: ['date', 'clob'],
+      debug: process.env.NODE_ENV == 'development',
+    },
+  },
 }));

@@ -12,11 +12,11 @@ export class TrxRepository {
   timeView = 'view_time_data_list';
   constructor(private readonly dbService: DBService) {}
   async create(createTrxDto: CreateTrxDto) {
-    return this.dbService.db.insert(createTrxDto).into(this.trxTable);
+    return this.dbService.mysql.insert(createTrxDto).into(this.trxTable);
   }
 
   async findAll(userIdx: number) {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select(
         'transaction_idx',
         'section_idx',
@@ -43,7 +43,7 @@ export class TrxRepository {
     requestDayOfWeek: number,
     requestTime: string,
   ): Promise<ViewTimeDataListEntity[]> {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select(
         'transaction_idx',
         'webhook_url',
@@ -63,7 +63,7 @@ export class TrxRepository {
   }
 
   async findOne(idx: number) {
-    const sql = this.dbService.db
+    const sql = this.dbService.mysql
       .select('*')
       .where('user_idx', idx)
       .from<TrxEntity>(this.trxTable);
@@ -77,7 +77,7 @@ export class TrxRepository {
     updateTrxDto: UpdateTrxDto,
   ): Promise<boolean> {
     await this.dbService
-      .db(this.trxTable)
+      .mysql(this.trxTable)
       .where({ transaction_idx: idx, user_idx: userIdx })
       .update(updateTrxDto);
 
@@ -86,7 +86,7 @@ export class TrxRepository {
 
   async remove(idx: number, userIdx: number): Promise<boolean> {
     await this.dbService
-      .db(this.trxTable)
+      .mysql(this.trxTable)
       .where({ transaction_idx: idx, user_idx: userIdx })
       .update({
         is_deleted: 'Y',
