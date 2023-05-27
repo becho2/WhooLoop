@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -29,15 +28,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
-  /**
-   * 위 <NestExpressApplication>, 아래 3줄
-   * hbs(handlebars) 사용을 위한 코드
-   * https://docs.nestjs.com/techniques/mvc
-   */
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
 
   // 같은 서버 내에 존재하는 Vue front app에서 api호출하기 위한 CORS 허용
   app.enableCors();

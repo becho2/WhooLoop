@@ -12,17 +12,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    return 'what?';
-    const user = await this.userService.findOneByEmail(email);
-    return user;
-    if (user && user.password === (await bcrypt.hash(password, 12))) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
   getAccessToken(email: string, userIdx: number): string {
     return this.jwtService.sign(
       { email: email, user_idx: userIdx },
