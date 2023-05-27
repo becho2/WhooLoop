@@ -15,7 +15,7 @@ export class JwtAccessStrategy extends PassportStrategy(
     // 부모클래스에 정보를 던져주기
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // request로 들어온 jwt token 입력
-      secretOrKey: 'accessKeyOfDailyWhooing', // auth service에서 jwt access token sign시 넣었던 secret(key)
+      secretOrKey: process.env.JWT_ACCESS_KEY,
     });
   }
 

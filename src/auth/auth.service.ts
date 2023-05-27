@@ -9,7 +9,7 @@ export class AuthService {
     return this.jwtService.sign(
       { email: email, user_idx: userIdx },
       {
-        secret: 'accessKeyOfDailyWhooing',
+        secret: process.env.JWT_ACCESS_KEY,
         expiresIn: '1h',
       },
     );
