@@ -10,7 +10,7 @@ import { UserOracle } from './user.oracle';
 @Injectable()
 export class UserService {
   userTable = 'users';
-  constructor(private userRepository: UserOracle) {}
+  constructor(private userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     await this.checkUserExists(createUserDto.email);
