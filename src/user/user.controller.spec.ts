@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { DBModule } from '../lib/db/db.module';
 import { UserRepository } from './user.repository';
+import { UserOracle } from './user.oracle';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -11,7 +12,7 @@ describe('UserController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule],
       controllers: [UserController],
-      providers: [UserService, UserRepository],
+      providers: [UserService, UserRepository, UserOracle],
     }).compile();
 
     controller = module.get<UserController>(UserController);
