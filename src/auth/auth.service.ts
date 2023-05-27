@@ -7,10 +7,7 @@ import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   getAccessToken(email: string, userIdx: number): string {
     return this.jwtService.sign(

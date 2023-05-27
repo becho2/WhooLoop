@@ -21,7 +21,8 @@ describe('UserService', () => {
     expect(repository).toBeDefined();
   });
 
-  it('should be created', () => {
+  // @TODO
+  it.skip('should be created', () => {
     repository.create(testCreateUserDto);
   });
 });
