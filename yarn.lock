@@ -1084,6 +1084,13 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
   integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
 
+"@types/oracledb@^5.2.5":
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/@types/oracledb/-/oracledb-5.2.5.tgz#a4594c807b39bd6eea74f99443bf885e24b3b12a"
+  integrity sha512-OTvuSYk0S57hhX1W3bCUnqI4BaZrCYxOe05PJtQVweb+ZKwp3NIIYj7vrj8aqKl2kjcHZ8x/forInYj9NB2O2g==
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
