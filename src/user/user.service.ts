@@ -38,12 +38,12 @@ export class UserService {
     return await this.userRepository.findOneByEmail(email);
   }
 
-  async update(idx: number, updateUserDto: UpdateUserDto) {
+  async update(idx: number, updateUserDto: UpdateUserDto): Promise<boolean> {
     updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
     return await this.userRepository.update(idx, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(idx: number): Promise<boolean> {
+    return await this.userRepository.remove(idx);
   }
 }

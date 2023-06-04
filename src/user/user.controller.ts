@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   UsePipes,
   ValidationPipe,
@@ -30,6 +29,11 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  /**
+   * @TODO 관리자 기능에서 전체 유저목록 확인시 권한확인 뒤에 접근가능하도록 개발 필요
+   * @param req
+   * @returns
+   */
   // @Get()
   // findAll() {
   //   return this.userService.findAll();
@@ -44,20 +48,21 @@ export class UserController {
   })
   @UseGuards(AuthGuard('jwtAccessGuard'))
   findOne(@Request() req: any) {
-    // findOne(@Param('idx', ParseIntPipe) idx: number) {
-    // ParseIntPipe를 이용해 string으로 들어온 idx값을 int(number)로 변경
     return this.userService.findOne(req.user.idx);
   }
 
-  @UseGuards(AuthGuard('jwtAccessGuard'))
   @Patch()
-  update(@Request() req: any, @Body() updateUserDto: UpdateUserDto) {
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  update(
+    @Request() req: any,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<boolean> {
     return this.userService.update(req.user.idx, updateUserDto);
   }
 
   @Delete(':idx')
-  remove(@Param('idx') idx: string) {
-    // 또는 파라미터 앞에 +를 붙여 string으로 들어온 idx값을 int(number)로 변경 가능
-    return this.userService.remove(+idx);
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  remove(@Request() req: any): Promise<boolean> {
+    return this.userService.remove(req.user.idx);
   }
 }

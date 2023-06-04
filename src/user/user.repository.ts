@@ -36,14 +36,17 @@ export class UserRepository {
     return rows;
   }
 
-  async update(idx: number, updateUserDto: UpdateUserDto) {
+  async update(idx: number, updateUserDto: UpdateUserDto): Promise<boolean> {
     return this.dbService
       .mysql(this.userTable)
       .where('user_idx', idx)
       .update(updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(idx: number): Promise<boolean> {
+    return this.dbService
+      .mysql(this.userTable)
+      .where('user_idx', idx)
+      .update('is_deleted', 'Y');
   }
 }
