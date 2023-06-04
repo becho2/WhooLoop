@@ -16,7 +16,7 @@ export class TrxRepository {
     return this.dbService.mysql.insert(createTrxDto).into(this.trxTable);
   }
 
-  async findAll(userIdx: number) {
+  async findAll(userIdx: number): Promise<TrxEntity[]> {
     const sql = this.dbService.mysql
       .select(
         'transaction_idx',
