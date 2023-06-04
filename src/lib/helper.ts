@@ -8,8 +8,8 @@ export function getToday(): string {
   return year + month + day;
 }
 
-// Returns current date string format YYYYMMDDHHMMSS
-export function getNow(): string {
+// Returns current date string format YYYY-MM-DD HH:mm:ss
+export function getDateTimeNow(): string {
   const date = new Date();
   const year = date.getFullYear();
   const month = ('0' + (1 + date.getMonth())).slice(-2);
@@ -18,7 +18,7 @@ export function getNow(): string {
   const minutes = ('0' + date.getMinutes()).slice(-2);
   const seconds = ('0' + date.getSeconds()).slice(-2);
 
-  return year + month + day + hours + minutes + seconds;
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 // Returns current date string format HHmm

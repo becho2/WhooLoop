@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { getHHmm, getNow, getToday } from '../lib/helper';
+import { getHHmm, getDateTimeNow, getToday } from '../lib/helper';
 import {
   WhooingInputData,
   WhooingInputForm,
@@ -24,7 +24,10 @@ export class WhooingEverydayService {
       dataList.forEach((data) => {
         data.entry_date = getToday();
         data.memo =
-          data.memo + ' / ' + getNow() + '에 webhook을 통해 입력되었습니다.';
+          data.memo +
+          ' / ' +
+          getDateTimeNow() +
+          '에 WhooingEveryday에서 후잉 webhook을 통해 입력되었습니다.';
         this._sendWhooingInput(data);
       });
     }
