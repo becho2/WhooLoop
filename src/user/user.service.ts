@@ -63,7 +63,7 @@ export class UserService {
         await this.userRepository.remove(idx, trx);
         await this.sectionRepository.removeAllByUserIdx(idx, trx);
         await this.trxRepository.removeAllByUserIdx(idx, trx);
-        const idxList: string[] = await this.trxRepository.findAllIdxOfUser(
+        const idxList: number[] = await this.trxRepository.findAllIdxOfUser(
           idx,
         );
         await this.logRepository.updateWebhookUrlsEmptyForDeleteUser(

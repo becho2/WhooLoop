@@ -18,7 +18,7 @@ export class LogRepository {
    * @returns
    */
   async updateWebhookUrlsEmptyForDeleteUser(
-    trxIdxList: string[],
+    trxIdxList: number[],
     trx: Knex.Transaction | undefined,
   ): Promise<boolean> {
     await (trx ? trx : this.dbService.mysql)(this.logTable)
