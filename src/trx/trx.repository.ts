@@ -5,6 +5,7 @@ import { TrxEntity } from './entities/trx.entity';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
 import { ViewTimeDataListEntity } from '../whooing-everyday/entities/view-time-data-list.entity';
+import { Knex } from 'knex';
 
 @Injectable()
 export class TrxRepository {
@@ -33,6 +34,18 @@ export class TrxRepository {
       .where({
         user_idx: userIdx,
         is_deleted: 'N',
+      })
+      .from<TrxEntity>(this.trxTable);
+    const rows = await sql;
+    return rows;
+  }
+
+  // deleted 상태이든 아니든 상관없이 해당 user의 모든 trx idx를 가져옴(탈퇴시 log삭제를 위함)
+  async findAllIdxOfUser(userIdx: number): Promise<string[]> {
+    const sql = this.dbService.mysql
+      .select('transaction_idx')
+      .where({
+        user_idx: userIdx,
       })
       .from<TrxEntity>(this.trxTable);
     const rows = await sql;
@@ -91,6 +104,17 @@ export class TrxRepository {
       .update({
         is_deleted: 'Y',
       });
+    return true;
+  }
+
+  async removeAllByUserIdx(
+    userIdx: number,
+    trx: Knex.Transaction | undefined,
+  ): Promise<boolean> {
+    await (trx ? trx : this.dbService.mysql)(this.trxTable)
+      .where({ user_idx: userIdx })
+      .delete();
+
     return true;
   }
 }

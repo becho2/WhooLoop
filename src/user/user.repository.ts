@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DBService } from '../lib/db/db.service';
 import { UserEntity } from './entities/user.entity';
+import { Knex } from 'knex';
 
 @Injectable()
 export class UserRepository {
@@ -43,10 +44,12 @@ export class UserRepository {
       .update(updateUserDto);
   }
 
-  async remove(idx: number): Promise<boolean> {
-    return this.dbService
-      .mysql(this.userTable)
+  async remove(
+    idx: number,
+    trx: Knex.Transaction | undefined,
+  ): Promise<boolean> {
+    return (trx ? trx : this.dbService.mysql)(this.userTable)
       .where('user_idx', idx)
-      .update('is_deleted', 'Y');
+      .delete();
   }
 }

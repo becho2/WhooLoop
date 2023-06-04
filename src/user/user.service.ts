@@ -1,15 +1,29 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { UserEntity } from './entities/user.entity';
+import { DBService } from '../lib/db/db.service';
+import { SectionRepository } from '../section/section.repository';
+import { TrxRepository } from '../trx/trx.repository';
+import { LogRepository } from '../whooing-everyday/log.repository';
 
 @Injectable()
 export class UserService {
   userTable = 'users';
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private readonly dbService: DBService,
+    private readonly userRepository: UserRepository,
+    private readonly sectionRepository: SectionRepository,
+    private readonly trxRepository: TrxRepository,
+    private readonly logRepository: LogRepository,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     await this.checkUserExists(createUserDto.email);
@@ -44,6 +58,23 @@ export class UserService {
   }
 
   async remove(idx: number): Promise<boolean> {
-    return await this.userRepository.remove(idx);
+    try {
+      await this.dbService.mysql.transaction(async (trx) => {
+        await this.userRepository.remove(idx, trx);
+        await this.sectionRepository.removeAllByUserIdx(idx, trx);
+        await this.trxRepository.removeAllByUserIdx(idx, trx);
+        const idxList: string[] = await this.trxRepository.findAllIdxOfUser(
+          idx,
+        );
+        await this.logRepository.updateWebhookUrlsEmptyForDeleteUser(
+          idxList,
+          trx,
+        );
+      });
+    } catch {
+      throw new InternalServerErrorException('Failed to remove user');
+    }
+
+    return true;
   }
 }

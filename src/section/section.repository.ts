@@ -4,6 +4,7 @@ import { DBService } from '../lib/db/db.service';
 import { SectionEntity } from './entities/section.entity';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
+import { Knex } from 'knex';
 
 @Injectable()
 export class SectionRepository {
@@ -57,6 +58,17 @@ export class SectionRepository {
       .mysql(this.sectionTable)
       .where({ section_idx: idx, user_idx: userIdx })
       .update({ is_deleted: 'Y' });
+
+    return true;
+  }
+
+  async removeAllByUserIdx(
+    userIdx: number,
+    trx: Knex.Transaction | undefined,
+  ): Promise<boolean> {
+    await (trx ? trx : this.dbService.mysql)(this.sectionTable)
+      .where({ user_idx: userIdx })
+      .delete();
 
     return true;
   }
