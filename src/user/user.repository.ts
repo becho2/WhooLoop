@@ -12,7 +12,9 @@ export class UserRepository {
   constructor(private readonly dbService: DBService) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.dbService.mysql.insert(createUserDto).into(this.userTable);
+    return await this.dbService.mysql
+      .insert(createUserDto)
+      .into(this.userTable);
   }
 
   findAll() {
@@ -38,7 +40,7 @@ export class UserRepository {
   }
 
   async update(idx: number, updateUserDto: UpdateUserDto): Promise<boolean> {
-    return this.dbService
+    return await this.dbService
       .mysql(this.userTable)
       .where('user_idx', idx)
       .update(updateUserDto);
@@ -48,7 +50,7 @@ export class UserRepository {
     idx: number,
     trx: Knex.Transaction | undefined,
   ): Promise<boolean> {
-    return (trx ? trx : this.dbService.mysql)(this.userTable)
+    return await (trx ? trx : this.dbService.mysql)(this.userTable)
       .where('user_idx', idx)
       .delete();
   }

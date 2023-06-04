@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { DBService } from '../lib/db/db.service';
 import { SectionEntity } from './entities/section.entity';
@@ -11,7 +11,7 @@ export class SectionRepository {
   sectionTable = 'sections';
   constructor(private readonly dbService: DBService) {}
   async create(createSectionDto: CreateSectionDto) {
-    return this.dbService.mysql
+    return await this.dbService.mysql
       .insert(createSectionDto)
       .into(this.sectionTable);
   }
@@ -47,7 +47,7 @@ export class SectionRepository {
   }
 
   async update(idx: number, updateSectionDto: UpdateSectionDto) {
-    return this.dbService
+    return await this.dbService
       .mysql(this.sectionTable)
       .where('section_idx', idx)
       .update(updateSectionDto);
