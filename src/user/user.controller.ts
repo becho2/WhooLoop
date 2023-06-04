@@ -60,7 +60,7 @@ export class UserController {
     return this.userService.update(req.user.idx, updateUserDto);
   }
 
-  @Delete(':idx')
+  @Delete()
   @UseGuards(AuthGuard('jwtAccessGuard'))
   remove(@Request() req: any): Promise<boolean> {
     return this.userService.remove(req.user.idx);
