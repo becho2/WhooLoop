@@ -42,14 +42,14 @@ export class TrxRepository {
 
   // deleted 상태이든 아니든 상관없이 해당 user의 모든 trx idx를 가져옴(탈퇴시 log삭제를 위함)
   async findAllIdxOfUser(userIdx: number): Promise<string[]> {
-    const sql = this.dbService.mysql
+    const sql = this.dbService
+      .mysql(this.trxTable)
       .select('transaction_idx')
       .where({
         user_idx: userIdx,
-      })
-      .from<TrxEntity>(this.trxTable);
+      });
     const rows = await sql;
-    return rows;
+    return rows.map((row) => row.transaction_idx);
   }
 
   async findByTime(
