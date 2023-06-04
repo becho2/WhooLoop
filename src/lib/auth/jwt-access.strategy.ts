@@ -15,8 +15,7 @@ export class JwtAccessStrategy extends PassportStrategy(
     // 부모클래스에 정보를 던져주기
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // request로 들어온 jwt token 입력
-      // test suite에서 env.JWT_ACCESS_KEY값이 불러지지 않아서 테스트용 문자열 추가
-      secretOrKey: process.env.JWT_ACCESS_KEY ?? 'keyForTest',
+      secretOrKey: process.env.JWT_ACCESS_KEY,
     });
   }
 
