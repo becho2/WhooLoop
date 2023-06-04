@@ -41,9 +41,11 @@ export class TrxRepository {
   }
 
   // deleted 상태이든 아니든 상관없이 해당 user의 모든 trx idx를 가져옴(탈퇴시 log삭제를 위함)
-  async findAllIdxOfUser(userIdx: number): Promise<number[]> {
-    const sql = this.dbService
-      .mysql(this.trxTable)
+  async findAllIdxOfUser(
+    userIdx: number,
+    trx: Knex.Transaction | undefined,
+  ): Promise<number[]> {
+    const sql = await (trx ? trx : this.dbService.mysql)(this.trxTable)
       .select('transaction_idx')
       .where({
         user_idx: userIdx,

@@ -10,16 +10,16 @@ export class TrxService {
     return this.trxRepository.create(createTrxDto);
   }
 
-  findAll(userIdx: number) {
-    return this.trxRepository.findAll(userIdx);
+  async findAll(userIdx: number) {
+    return await this.trxRepository.findAll(userIdx);
   }
 
-  update(
+  async update(
     idx: number,
     userIdx: number,
     updateTrxDto: UpdateTrxDto,
   ): Promise<boolean> {
-    return this.trxRepository.update(idx, userIdx, updateTrxDto);
+    return await this.trxRepository.update(idx, userIdx, updateTrxDto);
   }
 
   async remove(trxIdx: number, userIdx: number): Promise<boolean> {

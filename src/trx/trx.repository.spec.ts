@@ -33,7 +33,7 @@ describe('TrxRepository', () => {
   });
 
   it('should return empty list', async () => {
-    const list = await repository.findAllIdxOfUser(5);
+    const list = await repository.findAllIdxOfUser(5, undefined);
     expect(list).toEqual([]);
   });
 });
