@@ -4,7 +4,6 @@ import { DBModule } from '../lib/db/db.module';
 import { UserRepository } from './user.repository';
 import { BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserOracle } from './user.oracle';
 
 describe('UserService', () => {
   let service: UserService;
@@ -12,7 +11,7 @@ describe('UserService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule],
-      providers: [UserService, UserRepository, UserOracle],
+      providers: [UserService, UserRepository],
     }).compile();
 
     service = module.get<UserService>(UserService);
