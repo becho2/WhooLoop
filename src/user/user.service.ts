@@ -40,10 +40,6 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
   async findOne(idx: number): Promise<UserEntity> {
     return await this.userRepository.findOne(idx);
   }
@@ -55,6 +51,26 @@ export class UserService {
   async update(idx: number, updateUserDto: UpdateUserDto): Promise<boolean> {
     updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
     return await this.userRepository.update(idx, updateUserDto);
+  }
+
+  /**
+   * email로 해당 아이디에 활성화되어있는 반복거래 중 가장 첫번째 거래에 메모로 랜덤초기화 비밀번호 보내기
+   * @param email
+   * @returns
+   */
+  async resetPassword(email: string): Promise<boolean> {
+    const user = await this.userRepository.findOneByEmail(email);
+    if (!user) {
+      throw new BadRequestException('The user does not exist');
+    }
+
+    const randomPassword = '134801';
+    const updateUserDto: UpdateUserDto = {
+      password: randomPassword,
+    };
+
+    updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
+    return await this.userRepository.update(user.user_idx, updateUserDto);
   }
 
   async remove(idx: number): Promise<boolean> {

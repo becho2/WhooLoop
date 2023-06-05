@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -58,6 +59,11 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<boolean> {
     return this.userService.update(req.user.idx, updateUserDto);
+  }
+
+  @Patch('resetPassword')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<boolean> {
+    return this.userService.resetPassword(resetPasswordDto.email);
   }
 
   @Delete()
