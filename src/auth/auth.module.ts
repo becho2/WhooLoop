@@ -8,7 +8,7 @@ import { UserRepository } from '../user/user.repository';
 import { DBModule } from '../lib/db/db.module';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
-import { LogRepository } from '../whooing-everyday/log.repository';
+import { LogRepository } from '../whooloop/log.repository';
 
 @Module({
   imports: [DBModule, PassportModule, JwtModule.register({})],

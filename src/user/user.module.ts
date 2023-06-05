@@ -6,7 +6,7 @@ import { UserRepository } from './user.repository';
 import { JwtAccessStrategy } from '../lib/auth/jwt-access.strategy';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
-import { LogRepository } from '../whooing-everyday/log.repository';
+import { LogRepository } from '../whooloop/log.repository';
 
 @Module({
   imports: [DBModule],

@@ -6,7 +6,7 @@ import { BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
-import { LogRepository } from '../whooing-everyday/log.repository';
+import { LogRepository } from '../whooloop/log.repository';
 
 describe('UserService', () => {
   let service: UserService;

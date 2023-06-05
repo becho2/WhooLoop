@@ -11,7 +11,7 @@ import { LogRepository } from './log.repository';
 import { LogEntity } from './entities/log.entity';
 
 @Injectable()
-export class WhooingEverydayService {
+export class WhooLoopService {
   constructor(
     private readonly trxRepository: TrxRepository,
     private readonly logRepository: LogRepository,
@@ -27,7 +27,7 @@ export class WhooingEverydayService {
           data.memo +
           ' / ' +
           getDateTimeNow() +
-          '에 WhooingEveryday에서 후잉 webhook을 통해 입력되었습니다.';
+          ' - WhooLoop에서 후잉 webhook을 통해 입력되었습니다.';
         this._sendWhooingInput(data);
       });
     }

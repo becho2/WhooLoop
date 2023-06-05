@@ -4,7 +4,7 @@ import { DBService } from '../lib/db/db.service';
 import { TrxEntity } from './entities/trx.entity';
 import { CreateTrxDto } from './dto/create-trx.dto';
 import { UpdateTrxDto } from './dto/update-trx.dto';
-import { ViewTimeDataListEntity } from '../whooing-everyday/entities/view-time-data-list.entity';
+import { ViewTimeDataListEntity } from '../whooloop/entities/view-time-data-list.entity';
 import { Knex } from 'knex';
 
 @Injectable()

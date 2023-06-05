@@ -7,7 +7,7 @@ import { UserService } from '../user/user.service';
 import { UserRepository } from '../user/user.repository';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
-import { LogRepository } from '../whooing-everyday/log.repository';
+import { LogRepository } from '../whooloop/log.repository';
 import { ConfigModule } from '@nestjs/config';
 
 describe('AuthController', () => {

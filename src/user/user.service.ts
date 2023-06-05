@@ -12,7 +12,7 @@ import { UserEntity } from './entities/user.entity';
 import { DBService } from '../lib/db/db.service';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
-import { LogRepository } from '../whooing-everyday/log.repository';
+import { LogRepository } from '../whooloop/log.repository';
 
 @Injectable()
 export class UserService {

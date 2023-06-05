@@ -10,7 +10,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('NODE_PORT');
   const config = new DocumentBuilder()
-    .setTitle('Whooing Everyday API')
+    .setTitle('WhooLoop API')
     .setDescription('API documentation')
     .setVersion('1.0')
     .build();

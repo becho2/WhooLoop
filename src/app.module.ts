@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { WhooingEverydayModule } from './whooing-everyday/whooing-everyday.module';
+import { WhooLoopModule } from './whooloop/whoo-loop.module';
 import { UserModule } from './user/user.module';
 import { SectionModule } from './section/section.module';
 import { TrxModule } from './trx/trx.module';
@@ -17,7 +17,7 @@ import { AuthModule } from './auth/auth.module';
       isGlobal: true,
     }),
     DBModule,
-    WhooingEverydayModule,
+    WhooLoopModule,
     UserModule,
     SectionModule,
     TrxModule,
