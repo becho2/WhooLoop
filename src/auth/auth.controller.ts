@@ -16,6 +16,11 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  /**
+   * @deprecated Oauth 인증 방식으로 변경되면서 삭제 예정
+   * @param loginRequestDto
+   * @returns
+   */
   @Post('login')
   async login(@Body() loginRequestDto: LoginRequestDto): Promise<string> {
     const email = loginRequestDto.email;
