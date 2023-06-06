@@ -59,7 +59,7 @@ export class OauthService {
     const user = await this.findUserIdxByWhooingUserId(
       whooingAccessData.whooingUserId,
     );
-    if (user.user_idx === undefined) {
+    if (user === undefined) {
       this.createOauthUser(whooingAccessData);
     } else {
       this.updateOauthUser(user.user_idx, whooingAccessData);
