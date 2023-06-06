@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { RequestTokenInputDto } from './dto/request-token-input.dto';
 import axios from 'axios';
 import { RequestTokenOutputDto } from './dto/request-token-output.dto';
@@ -53,6 +53,7 @@ export class OauthService {
   }
 
   async oauthLogin(oauthLoginInput: OauthLoginInputDto) {
+    let userIdx = 0;
     const whooingAccessData: OauthAccessTokenResponseDto =
       await this.getAccessData(oauthLoginInput);
 
@@ -60,14 +61,15 @@ export class OauthService {
       whooingAccessData.whooingUserId,
     );
     if (user === undefined) {
-      this.createOauthUser(whooingAccessData);
+      userIdx = await this.createOauthUser(whooingAccessData);
     } else {
       this.updateOauthUser(user.user_idx, whooingAccessData);
+      userIdx = user.user_idx;
     }
 
     return this.authService.getAccessToken(
       whooingAccessData.whooingUserId,
-      user.user_idx,
+      userIdx,
     );
   }
 
@@ -94,6 +96,9 @@ export class OauthService {
     const accessTokenData = await axios
       .request(requestTokenConfig)
       .then((response) => {
+        if (response.data.code !== 200) {
+          throw new BadRequestException(response.data.message);
+        }
         const accessTokenData: OauthAccessTokenResponseDto = {
           whooingUserId: parseInt(response.data.user_id),
           whooingAccessToken: response.data.token,
@@ -103,14 +108,14 @@ export class OauthService {
       })
       .catch((error) => {
         console.log(error);
+        throw new BadRequestException(error.message);
       });
-    if (!accessTokenData) {
-      throw new InternalServerErrorException('Did not get access token');
-    }
     return accessTokenData;
   }
 
-  async createOauthUser(whooingAccessData: OauthAccessTokenResponseDto) {
+  async createOauthUser(
+    whooingAccessData: OauthAccessTokenResponseDto,
+  ): Promise<number> {
     const createData: CreateOauthUserDto = plainToInstance(
       CreateOauthUserDto,
       whooingAccessData,
@@ -118,7 +123,6 @@ export class OauthService {
         excludeExtraneousValues: true,
       },
     );
-    console.log(createData);
     return await this.oauthUserRepository.create(createData);
   }
 

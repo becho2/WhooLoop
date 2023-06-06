@@ -11,7 +11,7 @@ export class OauthUserRepository {
   userTable = 'oauth_users';
   constructor(private readonly dbService: DBService) {}
 
-  async create(createUserDto: CreateOauthUserDto): Promise<OauthUserEntity> {
+  async create(createUserDto: CreateOauthUserDto): Promise<number> {
     return await this.dbService.mysql
       .insert(createUserDto)
       .into(this.userTable);
