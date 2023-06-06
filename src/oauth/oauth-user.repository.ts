@@ -12,9 +12,11 @@ export class OauthUserRepository {
   constructor(private readonly dbService: DBService) {}
 
   async create(createUserDto: CreateOauthUserDto): Promise<number> {
-    return await this.dbService.mysql
+    const userIdx = await this.dbService.mysql
       .insert(createUserDto)
       .into(this.userTable);
+
+    return userIdx[0];
   }
 
   async update(
