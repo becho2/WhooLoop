@@ -9,10 +9,14 @@ import { OauthUserRepository } from './oauth-user.repository';
 import { CreateOauthUserDto } from './dto/create-oauth-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateOauthUserDto } from './dto/update-oauth-user.dto';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class OauthService {
-  constructor(private readonly oauthUserRepository: OauthUserRepository) {}
+  constructor(
+    private readonly oauthUserRepository: OauthUserRepository,
+    private readonly authService: AuthService,
+  ) {}
   /**
    * 후잉 Oauth Service 이용을 위한 첫단계, 이 앱의 ID, Secret을 통해 token을 받고
    * 해당 토큰과 함께 유저를 후잉로그인 화면으로 보낼 url을 만들어서 리턴
@@ -61,7 +65,10 @@ export class OauthService {
       this.updateOauthUser(user.user_idx, whooingAccessData);
     }
 
-    return user.user_idx;
+    return this.authService.getAccessToken(
+      whooingAccessData.whooingUserId,
+      user.user_idx,
+    );
   }
 
   async getAccessData(
