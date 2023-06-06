@@ -16,7 +16,6 @@ import { LogRepository } from '../whooloop/log.repository';
 
 @Injectable()
 export class UserService {
-  userTable = 'users';
   constructor(
     private readonly dbService: DBService,
     private readonly userRepository: UserRepository,

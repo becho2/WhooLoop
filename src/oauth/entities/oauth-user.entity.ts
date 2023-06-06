@@ -1,35 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDate, IsEmail, Length } from 'class-validator';
+import { IsDate, IsNumber, Length, MaxLength } from 'class-validator';
 
-export class UserEntity {
+export class OauthUserEntity {
   /** userIdx */
   @ApiProperty({
     type: 'number',
     description: 'userIdx',
     required: true,
   })
+  @Expose()
   user_idx: number;
 
-  /** email */
   @ApiProperty({
-    type: 'string',
-    description: 'email',
+    type: 'number',
     required: true,
   })
-  @Expose()
-  @IsEmail()
-  @Length(1, 50)
-  email: string;
+  @IsNumber()
+  @Expose({ name: 'whooingUserId' })
+  whooing_user_id: number;
 
-  /** password */
   @ApiProperty({
     type: 'string',
-    description: 'password',
     required: true,
   })
-  @Length(6, 255)
-  password: string;
+  @MaxLength(255)
+  @Expose({ name: 'whooingAccessToken' })
+  whooing_access_token: string;
+
+  @ApiProperty({
+    type: 'string',
+    required: true,
+  })
+  @MaxLength(255)
+  @Expose({ name: 'whooingAccessTokenSecret' })
+  whooing_access_token_secret: string;
 
   /** isDeleted */
   @ApiProperty({

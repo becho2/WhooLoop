@@ -64,5 +64,5 @@ export class SectionEntity {
   created: string;
 
   @IsDate()
-  updated_last: string;
+  updated_last = new Date();
 }

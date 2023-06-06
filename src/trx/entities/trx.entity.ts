@@ -138,5 +138,5 @@ export class TrxEntity {
   created: string;
 
   @IsDate()
-  updated_last: string;
+  updated_last = new Date();
 }

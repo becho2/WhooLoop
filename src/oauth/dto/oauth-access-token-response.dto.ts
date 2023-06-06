@@ -1,5 +1,5 @@
 export class OauthAccessTokenResponseDto {
-  userId: string;
-  accessToken: string;
-  accessTokenSecret: string;
+  whooingUserId: number;
+  whooingAccessToken: string;
+  whooingAccessTokenSecret: string;
 }

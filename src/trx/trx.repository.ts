@@ -45,12 +45,11 @@ export class TrxRepository {
     userIdx: number,
     trx: Knex.Transaction | undefined,
   ): Promise<number[]> {
-    const sql = await (trx ? trx : this.dbService.mysql)(this.trxTable)
+    const rows = await (trx ? trx : this.dbService.mysql)(this.trxTable)
       .select('transaction_idx')
       .where({
         user_idx: userIdx,
       });
-    const rows = await sql;
     return rows.map((row) => row.transaction_idx);
   }
 
