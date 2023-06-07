@@ -14,6 +14,7 @@ import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { FindAllApiResponseDto } from './dto/find-all-api-response.dto';
 
 @ApiTags('section')
 @Controller('section')
@@ -41,8 +42,8 @@ export class SectionController {
     isArray: true,
   })
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  async findAll(@Request() req: any) {
-    return await this.sectionService.findAll(req.user.idx);
+  async findAll(@Request() req: any): Promise<FindAllApiResponseDto[]> {
+    return await this.sectionService.findAllForFront(req.user.idx);
   }
 
   @Get(':id')

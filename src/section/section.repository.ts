@@ -31,7 +31,13 @@ export class SectionRepository {
 
   async findAll(userIdx: number): Promise<SectionEntity[]> {
     const sql = this.dbService.mysql
-      .select('section_idx', 'section_name', 'whooing_webhook_token', 'created')
+      .select(
+        'section_idx',
+        'section_name',
+        'whooing_section_id',
+        'whooing_webhook_token',
+        'created',
+      )
       .where({
         user_idx: userIdx,
         is_deleted: 'N',

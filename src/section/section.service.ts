@@ -3,6 +3,7 @@ import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { SectionRepository } from './section.repository';
 import { SectionEntity } from './entities/section.entity';
+import { FindAllApiResponseDto } from './dto/find-all-api-response.dto';
 
 @Injectable()
 export class SectionService {
@@ -21,8 +22,18 @@ export class SectionService {
   }
 
   async findAll(userIdx: number): Promise<SectionEntity[]> {
-    const sections = await this.sectionRepository.findAll(userIdx);
-    return sections;
+    return await this.sectionRepository.findAll(userIdx);
+  }
+
+  async findAllForFront(userIdx: number): Promise<FindAllApiResponseDto[]> {
+    const sectionList = await this.sectionRepository.findAll(userIdx);
+    return sectionList.map((section) => {
+      return {
+        section_idx: section.section_idx,
+        section_name: section.section_name,
+        whooing_webhook_token: section.whooing_webhook_token,
+      };
+    });
   }
 
   findOne(id: number) {

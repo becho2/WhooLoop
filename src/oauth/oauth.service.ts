@@ -11,11 +11,10 @@ import { plainToInstance } from 'class-transformer';
 import { UpdateOauthUserDto } from './dto/update-oauth-user.dto';
 import { AuthService } from '../auth/auth.service';
 import * as crypto from 'crypto';
-import { API_SECTIONS_URL, WHOOING_WEBHOOK_BASE_URL } from '../lib/constants';
+import { API_SECTIONS_URL } from '../lib/constants';
 import { SectionService } from '../section/section.service';
 import { CreateSectionDto } from '../section/dto/create-section.dto';
 import { UpdateSectionDto } from '../section/dto/update-section.dto';
-import { MinCommonSectionInfoDto } from '../section/dto/min-common-section-info.dto';
 
 @Injectable()
 export class OauthService {
@@ -78,7 +77,9 @@ export class OauthService {
       // @TODO: accesstoken이랑 secret도 같으면 update도 굳이 할 필요 없음
       this.updateOauthUser(user.user_idx, whooingAccessData);
       userIdx = user.user_idx;
-      // @TODO 이미 등록된 유저라도 변경된 섹션 정보가 있는지 확인해서 update
+      // 이미 등록된 유저일 때, 기존에 등록된 섹션 외에 새로운 섹션이 생겼는지 확인해서 추가 insert
+      await this.addSections(userIdx, whooingAccessData);
+      // @TODO (우선순위: Low) 이미 등록된 섹션 중 이름이 변경된 섹션 확인해서 update
       // await this.updateSections(userIdx, whooingAccessData);
     }
 
@@ -98,24 +99,59 @@ export class OauthService {
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
     // 해당 후잉 계정에 속한 섹션 리스트를 불러와서 저장한다
-    await this.createWhooingSections(userIdx, whooingAccessData);
-  }
-
-  /**
-   * 해당 user id에 존재하는 섹션리스트를 검색해서 DB에 넣어주기
-   * @param userIdx
-   * @param whooingAccessData
-   */
-  async createWhooingSections(
-    userIdx: number,
-    whooingAccessData: OauthAccessTokenResponseDto,
-  ) {
     const sectionList = await this.resourceApiRequest(
       API_SECTIONS_URL,
       whooingAccessData,
     );
+    await this.createWhooingSections(userIdx, sectionList);
+  }
+
+  /**
+   * 기존에 없던 추가된 섹션 찾아서 추가
+   * @param userIdx
+   * @param whooingAccessData
+   */
+  async addSections(
+    userIdx: number,
+    whooingAccessData: OauthAccessTokenResponseDto,
+  ) {
+    // 기존 입력돼있는 섹션리스트 불러오기
+    const prevSectionList = await this.sectionService.findAll(userIdx);
+    const prevSectionIds: string[] = prevSectionList.map(
+      (section) => section.whooing_section_id,
+    );
+
+    // 현재 해당 후잉계정의 섹션리스트 가져오기
+    const nowSectionList = await this.resourceApiRequest(
+      API_SECTIONS_URL,
+      whooingAccessData,
+    );
+    const nowSectionIds = nowSectionList.map(
+      (section: any) => section.section_id,
+    );
+
+    // 기존 섹션리스트와 현재 섹션 리스트의 whooing section_id 값을 비교해서 기존에 없던 새로운 id만 찾기
+    const sectionIdsNeedToBeAdded: UpdateSectionDto[] = nowSectionIds.filter(
+      (id: string) => !prevSectionIds.includes(id),
+    );
+    if (sectionIdsNeedToBeAdded.length === 0) {
+      return false;
+    }
+    // 기존에 없던 새로운 id를 가진 섹션정보만 남긴 리스트 생성
+    const sectionsNeedToBeAdded = nowSectionList.filter((section: any) =>
+      sectionIdsNeedToBeAdded.includes(section.section_id),
+    );
+
+    await this.createWhooingSections(userIdx, sectionsNeedToBeAdded);
+  }
+
+  /**
+   * @param userIdx
+   * @param whooingAccessData
+   */
+  async createWhooingSections(userIdx: number, whooingSectionList: any) {
     const createSectionList: CreateSectionDto[] = [];
-    sectionList.forEach((section: any, index: number) => {
+    whooingSectionList.forEach((section: any, index: number) => {
       const createSectionData: CreateSectionDto = {
         user_idx: userIdx,
         section_name: section.title,
@@ -129,13 +165,13 @@ export class OauthService {
     this.sectionService.createMany(createSectionList);
   }
 
-  // @TODO
+  // @TODO (우선순위: Low) 이미 등록돼있는 섹션 이름이 변경됐을 경우 update
   // async updateSections(
   //   userIdx: number,
   //   whooingAccessData: OauthAccessTokenResponseDto,
   // ): Promise<boolean> {
   //   const rawPrevSectionList = await this.sectionService.findAll(userIdx);
-  //   const PrevSectionList: MinCommonSectionInfoDto[] = rawPrevSectionList.map(
+  //   const prevSectionList: MinCommonSectionInfoDto[] = rawPrevSectionList.map(
   //     (section) => {
   //       return {
   //         section_name: section.section_name,
@@ -155,8 +191,9 @@ export class OauthService {
   //       whooing_webhook_token: section.webhook_token,
   //     };
   //   });
+  //   // 현재 섹션 리스트에서 예전에 등록돼있던 섹션 리스트에
   //   const sectionsNeedToBeUpdated: UpdateSectionDto[] = sectionListNow.filter(
-  //     (section: MinCommonSectionInfoDto) => !sectionListNow.includes(section),
+  //     (section: MinCommonSectionInfoDto) => !prevSectionList.includes(section),
   //   );
 
   //   if (sectionsNeedToBeUpdated.length === 0) {
