@@ -54,7 +54,7 @@ export class TrxRepository {
   }
 
   async findByTime(
-    requestDayOfWeek: number,
+    requestedDayOfWeekDatas: any[],
     requestTime: string,
   ): Promise<ViewTimeDataListEntity[]> {
     const sql = this.dbService.mysql
@@ -67,7 +67,7 @@ export class TrxRepository {
         'transaction_right',
         'transaction_memo',
       )
-      .whereIn('request_day_of_week', [requestDayOfWeek, 'd'])
+      .whereIn('request_day_of_week', requestedDayOfWeekDatas)
       .where({
         request_time: requestTime,
       })

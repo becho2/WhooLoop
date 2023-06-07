@@ -77,9 +77,19 @@ export class WhooLoopService {
 
   private async _getDataListByTime(): Promise<WhooingInputData[]> {
     const date = new Date();
-    const dayOfWeek = date.getDay();
+    const dayOfWeekToday = date.getDay();
     const timeNow = getHHmm();
-    const result = await this.trxRepository.findByTime(dayOfWeek, timeNow);
+    const weekdays = [1, 2, 3, 4, 5]; // 월화수목금 평일
+
+    // 들어갈 수 있는 값: 요일을 가리키는 숫자, 매일을 뜻하는 d, 평일을 뜻하는 w
+    const requestDayOfWeekData = [dayOfWeekToday, 'd'];
+    if (weekdays.includes(dayOfWeekToday)) {
+      requestDayOfWeekData.push('w');
+    }
+    const result = await this.trxRepository.findByTime(
+      requestDayOfWeekData,
+      timeNow,
+    );
 
     const whooingInputDataList: WhooingInputData[] = [];
     result.forEach((data) => {
