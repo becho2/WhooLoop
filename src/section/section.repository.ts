@@ -16,6 +16,19 @@ export class SectionRepository {
       .into(this.sectionTable);
   }
 
+  async createMany(createSectionList: CreateSectionDto[]) {
+    return await this.dbService.mysql
+      .insert(createSectionList)
+      .into(this.sectionTable);
+  }
+
+  async update(idx: number, updateSectionDto: UpdateSectionDto) {
+    return await this.dbService
+      .mysql(this.sectionTable)
+      .where('section_idx', idx)
+      .update(updateSectionDto);
+  }
+
   async findAll(userIdx: number): Promise<SectionEntity[]> {
     const sql = this.dbService.mysql
       .select('section_idx', 'section_name', 'whooing_webhook_url', 'created')
@@ -44,13 +57,6 @@ export class SectionRepository {
       .from<SectionEntity>(this.sectionTable);
     const [rows] = await sql;
     return rows;
-  }
-
-  async update(idx: number, updateSectionDto: UpdateSectionDto) {
-    return await this.dbService
-      .mysql(this.sectionTable)
-      .where('section_idx', idx)
-      .update(updateSectionDto);
   }
 
   async remove(idx: number, userIdx: number) {

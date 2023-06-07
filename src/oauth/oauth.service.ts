@@ -11,13 +11,17 @@ import { plainToInstance } from 'class-transformer';
 import { UpdateOauthUserDto } from './dto/update-oauth-user.dto';
 import { AuthService } from '../auth/auth.service';
 import * as crypto from 'crypto';
-import { API_SECTIONS_URL } from '../lib/constants';
+import { API_SECTIONS_URL, WHOOING_WEBHOOK_BASE_URL } from '../lib/constants';
+import { SectionService } from '../section/section.service';
+import { CreateSectionDto } from '../section/dto/create-section.dto';
+import { UpdateSectionDto } from 'src/section/dto/update-section.dto';
 
 @Injectable()
 export class OauthService {
   constructor(
     private readonly oauthUserRepository: OauthUserRepository,
     private readonly authService: AuthService,
+    private readonly sectionService: SectionService,
   ) {}
   /**
    * 후잉 Oauth Service 이용을 위한 첫단계, 이 앱의 ID, Secret을 통해 token을 받고
@@ -72,7 +76,8 @@ export class OauthService {
     } else {
       this.updateOauthUser(user.user_idx, whooingAccessData);
       userIdx = user.user_idx;
-      await this.afterCreateUser(userIdx, whooingAccessData);
+      // @TODO 이미 등록된 유저라도 변경된 섹션 정보가 있는지 확인해서 update
+      // await this.updateSections(userIdx, whooingAccessData);
     }
 
     return this.authService.getAccessToken(
@@ -82,11 +87,24 @@ export class OauthService {
   }
 
   /**
-   * 첫 로그인시 create user 후 처리
-   * 해당 user id에 존재하는 섹션리스트를 검색해서 DB에 넣어주기
+   * 후잉 Oauth 첫 로그인시 유저를 새로 생성하고 난 후 후처리
+   * @param userIdx
    * @param whooingAccessData
    */
   async afterCreateUser(
+    userIdx: number,
+    whooingAccessData: OauthAccessTokenResponseDto,
+  ) {
+    // 해당 후잉 계정에 속한 섹션 리스트를 불러와서 저장한다
+    await this.createWhooingSections(userIdx, whooingAccessData);
+  }
+
+  /**
+   * 해당 user id에 존재하는 섹션리스트를 검색해서 DB에 넣어주기
+   * @param userIdx
+   * @param whooingAccessData
+   */
+  async createWhooingSections(
     userIdx: number,
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
@@ -94,7 +112,40 @@ export class OauthService {
       API_SECTIONS_URL,
       whooingAccessData,
     );
+    const createSectionList: CreateSectionDto[] = [];
+    sectionList.forEach((section: any, index: number) => {
+      const createSectionData: CreateSectionDto = {
+        user_idx: userIdx,
+        section_name: section.title,
+        whooing_section_id: section.section_id,
+        whooing_webhook_url: WHOOING_WEBHOOK_BASE_URL + section.token,
+        sort_no: index,
+      };
+      createSectionList.push(createSectionData);
+    });
+
+    this.sectionService.createMany(createSectionList);
   }
+
+  // async updateSections(
+  //   userIdx: number,
+  //   whooingAccessData: OauthAccessTokenResponseDto,
+  // ) {
+  //   const prevSectionList = await this.sectionService.findAll(userIdx);
+  //   const sectionListNow = await this.resourceApiRequest(
+  //     API_SECTIONS_URL,
+  //     whooingAccessData,
+  //   );
+  //   const updateSectionList: UpdateSectionDto[] = [];
+
+  //   if (updateSectionList.length === 0) {
+  //     return false;
+  //   } else {
+  //     for (const section of updateSectionList) {
+  //       await this.sectionService.update(section);
+  //     }
+  //   }
+  // }
 
   async resourceApiRequest(
     url: string,

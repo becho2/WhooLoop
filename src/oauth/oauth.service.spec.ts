@@ -5,6 +5,8 @@ import { OauthUserRepository } from './oauth-user.repository';
 import { OauthAccessTokenResponseDto } from './dto/oauth-access-token-response.dto';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
+import { SectionService } from '../section/section.service';
+import { SectionRepository } from '../section/section.repository';
 
 describe('OauthService', () => {
   let service: OauthService;
@@ -12,7 +14,13 @@ describe('OauthService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule, JwtModule.register({})],
-      providers: [OauthService, AuthService, OauthUserRepository],
+      providers: [
+        OauthService,
+        AuthService,
+        OauthUserRepository,
+        SectionService,
+        SectionRepository,
+      ],
     }).compile();
 
     service = module.get<OauthService>(OauthService);
