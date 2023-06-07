@@ -14,7 +14,8 @@ import * as crypto from 'crypto';
 import { API_SECTIONS_URL, WHOOING_WEBHOOK_BASE_URL } from '../lib/constants';
 import { SectionService } from '../section/section.service';
 import { CreateSectionDto } from '../section/dto/create-section.dto';
-import { UpdateSectionDto } from 'src/section/dto/update-section.dto';
+import { UpdateSectionDto } from '../section/dto/update-section.dto';
+import { MinCommonSectionInfoDto } from '../section/dto/min-common-section-info.dto';
 
 @Injectable()
 export class OauthService {
@@ -74,6 +75,7 @@ export class OauthService {
         await this.afterCreateUser(userIdx, whooingAccessData);
       }
     } else {
+      // @TODO: accesstoken이랑 secret도 같으면 update도 굳이 할 필요 없음
       this.updateOauthUser(user.user_idx, whooingAccessData);
       userIdx = user.user_idx;
       // @TODO 이미 등록된 유저라도 변경된 섹션 정보가 있는지 확인해서 update
@@ -118,7 +120,7 @@ export class OauthService {
         user_idx: userIdx,
         section_name: section.title,
         whooing_section_id: section.section_id,
-        whooing_webhook_url: WHOOING_WEBHOOK_BASE_URL + section.token,
+        whooing_webhook_token: section.webhook_token,
         sort_no: index,
       };
       createSectionList.push(createSectionData);
@@ -127,23 +129,43 @@ export class OauthService {
     this.sectionService.createMany(createSectionList);
   }
 
+  // @TODO
   // async updateSections(
   //   userIdx: number,
   //   whooingAccessData: OauthAccessTokenResponseDto,
-  // ) {
-  //   const prevSectionList = await this.sectionService.findAll(userIdx);
-  //   const sectionListNow = await this.resourceApiRequest(
+  // ): Promise<boolean> {
+  //   const rawPrevSectionList = await this.sectionService.findAll(userIdx);
+  //   const PrevSectionList: MinCommonSectionInfoDto[] = rawPrevSectionList.map(
+  //     (section) => {
+  //       return {
+  //         section_name: section.section_name,
+  //         whooing_section_id: section.whooing_section_id,
+  //         whooing_webhook_token: section.whooing_webhook_token,
+  //       };
+  //     },
+  //   );
+  //   const rawSectionListNow = await this.resourceApiRequest(
   //     API_SECTIONS_URL,
   //     whooingAccessData,
   //   );
-  //   const updateSectionList: UpdateSectionDto[] = [];
+  //   const sectionListNow = rawSectionListNow.map((section: any) => {
+  //     return {
+  //       section_name: section.title,
+  //       whooing_section_id: section.section_id,
+  //       whooing_webhook_token: section.webhook_token,
+  //     };
+  //   });
+  //   const sectionsNeedToBeUpdated: UpdateSectionDto[] = sectionListNow.filter(
+  //     (section: MinCommonSectionInfoDto) => !sectionListNow.includes(section),
+  //   );
 
-  //   if (updateSectionList.length === 0) {
+  //   if (sectionsNeedToBeUpdated.length === 0) {
   //     return false;
   //   } else {
-  //     for (const section of updateSectionList) {
+  //     for (const section of sectionsNeedToBeUpdated) {
   //       await this.sectionService.update(section);
   //     }
+  //     return true;
   //   }
   // }
 

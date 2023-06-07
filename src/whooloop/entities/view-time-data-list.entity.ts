@@ -14,15 +14,14 @@ export class ViewTimeDataListEntity {
   @Expose()
   transaction_idx: number;
 
-  /** whooing POST Webhook URL */
   @ApiProperty({
     type: 'string',
-    description: 'whooing POST Webhook URL',
+    description: 'whooing POST Webhook token',
     required: true,
   })
   @Expose()
-  @Length(1, 70)
-  webhook_url: string;
+  @Length(24, 25)
+  webhook_token: string;
 
   /** 요청을 반복할 요일(d: 매일, 1~7: 월~일요일) */
   @ApiProperty({

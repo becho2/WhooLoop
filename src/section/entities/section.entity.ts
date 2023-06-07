@@ -40,15 +40,14 @@ export class SectionEntity {
   @Length(1, 10)
   whooing_section_id: string;
 
-  /** whooing POST Webhook URL */
   @ApiProperty({
     type: 'string',
-    description: 'whooing POST Webhook URL',
+    description: 'whooing POST Webhook token',
     required: true,
   })
   @Expose()
-  @Length(1, 60)
-  whooing_webhook_url: string;
+  @Length(24, 25)
+  whooing_webhook_token: string;
 
   @ApiProperty({
     type: 'number',

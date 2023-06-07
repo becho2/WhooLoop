@@ -9,6 +9,7 @@ import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
 import { LogRepository } from './log.repository';
 import { LogEntity } from './entities/log.entity';
+import { WHOOING_WEBHOOK_BASE_URL } from '../lib/constants';
 
 @Injectable()
 export class WhooLoopService {
@@ -48,7 +49,7 @@ export class WhooLoopService {
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: data.webhook_url,
+      url: WHOOING_WEBHOOK_BASE_URL + data.webhook_token,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -56,7 +57,7 @@ export class WhooLoopService {
     };
 
     const logData = new LogEntity();
-    logData.request_url = data.webhook_url;
+    logData.request_url = config.url;
     logData.request_body = dataJson;
     logData.transaction_idx = data.transaction_idx;
 
@@ -84,7 +85,7 @@ export class WhooLoopService {
     result.forEach((data) => {
       const whooingInputData = new WhooingInputData();
       whooingInputData.transaction_idx = data.transaction_idx;
-      whooingInputData.webhook_url = data.webhook_url;
+      whooingInputData.webhook_token = data.webhook_token;
       whooingInputData.item = data.transaction_item;
       whooingInputData.money = data.transaction_money_amount;
       whooingInputData.left = data.transaction_left;

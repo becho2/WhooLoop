@@ -5,6 +5,6 @@ export class CreateSectionDto extends PickType(SectionEntity, [
   'user_idx',
   'section_name',
   'whooing_section_id',
-  'whooing_webhook_url',
+  'whooing_webhook_token',
   'sort_no',
 ]) {}

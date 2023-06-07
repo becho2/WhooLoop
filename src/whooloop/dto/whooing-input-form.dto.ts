@@ -1,6 +1,6 @@
 export class WhooingInputData {
   transaction_idx: number;
-  webhook_url: string;
+  webhook_token: string;
   entry_date: string;
   item: string;
   money: number;

@@ -60,7 +60,7 @@ export class TrxRepository {
     const sql = this.dbService.mysql
       .select(
         'transaction_idx',
-        'webhook_url',
+        'webhook_token',
         'transaction_item',
         'transaction_money_amount',
         'transaction_left',
