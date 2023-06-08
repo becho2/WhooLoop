@@ -74,8 +74,17 @@ export class OauthService {
         await this.afterCreateUser(userIdx, whooingAccessData);
       }
     } else {
-      // @TODO: accesstoken이랑 secret도 같으면 update도 굳이 할 필요 없음
-      this.updateOauthUser(user.user_idx, whooingAccessData);
+      // accesstoken이랑 secret도 같으면 update 굳이 할 필요 없음
+      if (
+        !(
+          user.whooing_access_token === whooingAccessData.whooingAccessToken &&
+          user.whooing_access_token_secret ===
+            whooingAccessData.whooingAccessTokenSecret
+        )
+      ) {
+        // 토큰이나 토큰시크릿이 달라졌을 경우 해당 정보 업데이트
+        this.updateOauthUser(user.user_idx, whooingAccessData);
+      }
       userIdx = user.user_idx;
       // 이미 등록된 유저일 때, 기존에 등록된 섹션 외에 새로운 섹션이 생겼는지 확인해서 추가 insert
       await this.addSections(userIdx, whooingAccessData);

@@ -45,7 +45,12 @@ export class OauthUserRepository {
   async findUserIdxByWhooingUserId(whooingUserId: number): Promise<any> {
     return await this.dbService
       .mysql(this.userTable)
-      .select('user_idx')
+      .select(
+        'user_idx',
+        'whooing_user_id',
+        'whooing_access_token',
+        'whooing_access_token_secret',
+      )
       .where('whooing_user_id', whooingUserId)
       .first();
   }
