@@ -16,6 +16,12 @@ export class AccountRepository {
       .into(this.accountTable);
   }
 
+  async createMany(createAccountDto: CreateAccountDto[]) {
+    return await this.dbService.mysql
+      .insert(createAccountDto)
+      .into(this.accountTable);
+  }
+
   async update(idx: number, updateAccountDto: UpdateAccountDto) {
     return await this.dbService
       .mysql(this.accountTable)
