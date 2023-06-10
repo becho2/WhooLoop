@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { DBModule } from '../lib/db/db.module';
 import { UserService } from '../user/user.service';
-import { UserRepository } from '../user/user.repository';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
 import { LogRepository } from '../whooloop/log.repository';
@@ -29,7 +28,6 @@ describe('AuthController', () => {
         AuthService,
         JwtService,
         UserService,
-        UserRepository,
         SectionRepository,
         TrxRepository,
         LogRepository,
