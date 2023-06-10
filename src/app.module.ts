@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DBModule } from './lib/db/db.module';
 import { AuthModule } from './auth/auth.module';
 import { OauthModule } from './oauth/oauth.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OauthModule } from './oauth/oauth.module';
     TrxModule,
     DBModule,
     OauthModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
