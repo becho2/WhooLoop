@@ -3,6 +3,14 @@ import { Expose } from 'class-transformer';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateAccountDto {
+  @ApiProperty({
+    type: 'number',
+    description: 'section_idx',
+    required: true,
+  })
+  @Expose()
+  section_idx: number;
+
   /** 연결된 section_id FK */
   @ApiProperty({
     type: 'number',
