@@ -69,7 +69,7 @@ export class SectionRepository {
     await this.dbService
       .mysql(this.sectionTable)
       .where({ section_idx: idx, user_idx: userIdx })
-      .update({ is_deleted: 'Y' });
+      .delete();
 
     return true;
   }
