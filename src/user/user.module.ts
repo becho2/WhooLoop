@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { DBModule } from '../lib/db/db.module';
-import { UserRepository } from './user.repository';
 import { JwtAccessStrategy } from '../lib/auth/jwt-access.strategy';
 import { SectionRepository } from '../section/section.repository';
 import { TrxRepository } from '../trx/trx.repository';
@@ -14,7 +13,6 @@ import { LogRepository } from '../whooloop/log.repository';
   providers: [
     JwtAccessStrategy,
     UserService,
-    UserRepository,
     SectionRepository,
     TrxRepository,
     LogRepository,
