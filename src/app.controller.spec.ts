@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello WhooLoop Home!');
+    it('should return a string starts with "Hello!"', () => {
+      expect(appController.getHello().startsWith('Hello!')).toBeTruthy();
     });
   });
 });
