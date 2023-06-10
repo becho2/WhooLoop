@@ -28,6 +28,6 @@ export class JwtAccessStrategy extends PassportStrategy(
    * 인가 통과 뒤에 req.user.email, req.uesr.idx 등으로 validate()에서 return한 데이터들을 쓸 수 있게 됨
    */
   validate(payload: AuthPayloadDto): AuthGuardOutputDto {
-    return { whooingId: payload.whooingUserId, idx: payload.userIdx };
+    return { idx: payload.userIdx };
   }
 }

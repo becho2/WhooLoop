@@ -60,7 +60,7 @@ export class OauthService {
   async oauthLogin(oauthLoginInput: OauthLoginInputDto) {
     let userIdx = 0;
     const whooingAccessData: OauthAccessTokenResponseDto =
-      await this.getAccessData(oauthLoginInput);
+      await this.getAccessDataFromWhooing(oauthLoginInput);
 
     const user = await this.findUserIdxByWhooingUserId(
       whooingAccessData.whooingUserId,
@@ -168,7 +168,7 @@ export class OauthService {
   //   }
   // }
 
-  async getAccessData(
+  async getAccessDataFromWhooing(
     oauthLogin: OauthLoginInputDto,
   ): Promise<OauthAccessTokenResponseDto> {
     const requestData: OauthAccessTokenRequestDto = {

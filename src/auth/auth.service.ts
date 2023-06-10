@@ -8,7 +8,6 @@ export class AuthService {
 
   getAccessToken(whooingUserId: number | string, userIdx: number): string {
     const authPayloadDto: AuthPayloadDto = {
-      whooingUserId: whooingUserId,
       userIdx: userIdx,
     };
     return this.jwtService.sign(authPayloadDto, {
