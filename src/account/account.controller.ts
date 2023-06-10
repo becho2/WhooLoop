@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AuthGuard } from '@nestjs/passport';
+import { SelectAccountOutputDto } from './dto/select-account-output.dto';
 
 /**
  * account = 후잉 계정항목을 뜻함
@@ -21,13 +22,18 @@ export class AccountController {
 
   @Post()
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  async refresh(@Request() req: any, @Body() body: { sectionIdx: number }) {
+  async refresh(
+    @Request() req: any,
+    @Body() body: { sectionIdx: number },
+  ): Promise<SelectAccountOutputDto> {
     return await this.accountService.refresh(req.user.idx, body.sectionIdx);
   }
 
   @Get(':sectionIdx')
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  async findOne(@Param('sectionIdx') sectionIdx: string) {
+  async findOne(
+    @Param('sectionIdx') sectionIdx: string,
+  ): Promise<SelectAccountOutputDto> {
     return await this.accountService.findOneBySectionIdx(+sectionIdx);
   }
 

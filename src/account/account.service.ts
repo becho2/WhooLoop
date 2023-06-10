@@ -11,6 +11,8 @@ import { SectionRepository } from '../section/section.repository';
 import { plainToInstance } from 'class-transformer';
 import { AccountEntity } from './entities/account.entity';
 import { getPastDateTimeByMinutes } from '../lib/helper';
+import { SelectAccountOutputDto } from './dto/select-account-output.dto';
+import { WhooingAccountUnitDto } from './dto/whooing-account-unit.dto';
 
 @Injectable()
 export class AccountService {
@@ -31,7 +33,10 @@ export class AccountService {
     );
   }
 
-  async refresh(userIdx: number, sectionIdx: number) {
+  async refresh(
+    userIdx: number,
+    sectionIdx: number,
+  ): Promise<SelectAccountOutputDto> {
     const sectionId: string = (await this.sectionRepository.findOne(sectionIdx))
       .whooing_section_id;
 
@@ -45,7 +50,6 @@ export class AccountService {
         'You requested too often(please try again 5 minutes later).',
       );
     }
-    // return false;
 
     const whooingAccessData: OauthAccessTokenResponseDto = plainToInstance(
       OauthAccessTokenResponseDto,
@@ -67,13 +71,18 @@ export class AccountService {
     };
 
     if (accountInfo === undefined) {
-      return await this.create(createAccountData);
+      // 기존 정보가 없을 경우 create, 있으면 update
+      if (await this.create(createAccountData)) {
+        return this.findOneBySectionIdx(sectionIdx);
+      }
     } else {
       const updateAccountData: UpdateAccountDto = {
         ...createAccountData,
         updated_last: now,
       };
-      return await this.update(accountInfo.account_idx, updateAccountData);
+      if (await this.update(accountInfo.account_idx, updateAccountData)) {
+        return this.findOneBySectionIdx(sectionIdx);
+      }
     }
   }
 
@@ -112,8 +121,31 @@ export class AccountService {
     return this.accountRepository.createMany(createAccountList);
   }
 
-  async findOneBySectionIdx(sectionIdx: number) {
-    return await this.accountRepository.findOneBySectionIdx(sectionIdx);
+  async findOneBySectionIdx(
+    sectionIdx: number,
+  ): Promise<SelectAccountOutputDto> {
+    const accountString: AccountEntity =
+      await this.accountRepository.findOneBySectionIdx(sectionIdx);
+
+    const assets = JSON.parse(accountString.assets);
+    const liabilities = JSON.parse(accountString.liabilities);
+    const capital = accountString.capital
+      ? JSON.parse(accountString.capital)
+      : [];
+    const expenses = JSON.parse(accountString.expenses);
+    const income = JSON.parse(accountString.income);
+
+    const selectOutputDto: SelectAccountOutputDto = {
+      assets: assets.map((asset: WhooingAccountUnitDto) => asset.title),
+      liabilities: liabilities.map(
+        (asset: WhooingAccountUnitDto) => asset.title,
+      ),
+      capital: capital.map((asset: WhooingAccountUnitDto) => asset.title),
+      expenses: expenses.map((asset: WhooingAccountUnitDto) => asset.title),
+      income: income.map((asset: WhooingAccountUnitDto) => asset.title),
+    };
+
+    return selectOutputDto;
   }
 
   remove(id: number) {
