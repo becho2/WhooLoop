@@ -122,7 +122,19 @@ export class OauthService {
     const nowSectionList: WhooingSectionResponseDto[] =
       await this.sectionService.getWhooingSectionInfo(whooingAccessData);
 
-    await this.sectionService.addSections(userIdx, nowSectionList);
+    const addSectionResult = await this.sectionService.addSections(
+      userIdx,
+      nowSectionList,
+    );
+    /**
+     * @TODO 성공시 새로 등록된 섹션들은 accounts 한번 등록해주기
+     */
+    if (addSectionResult === true) {
+      // for (const section of nowSectionList) {
+      //   const sectionIdx = await this.sectionService.findOne()
+      //   await this.accountService.refresh(userIdx, section.section_id);
+      // }
+    }
     // @TODO (우선순위: Low) 이미 등록된 섹션 중 이름이 변경된 섹션 확인해서 update
     // await this.updateSections(userIdx, whooingAccessData);
   }

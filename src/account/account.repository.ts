@@ -29,9 +29,25 @@ export class AccountRepository {
       .update(updateAccountDto);
   }
 
+  async findOneBySectionIdx(sectionIdx: number): Promise<AccountEntity> {
+    const sql = this.dbService.mysql
+      .select(
+        'account_idx',
+        'assets',
+        'liabilities',
+        'capital',
+        'expenses',
+        'income',
+      )
+      .where('section_idx', sectionIdx)
+      .from<AccountEntity>(this.accountTable);
+    const [rows] = await sql;
+    return rows;
+  }
+
   async findOneByWhooingSectionId(sectionId: string): Promise<AccountEntity> {
     const sql = this.dbService.mysql
-      .select('account_idx')
+      .select('account_idx', 'updated_last')
       .where('section_id', sectionId)
       .from<AccountEntity>(this.accountTable);
     const [rows] = await sql;

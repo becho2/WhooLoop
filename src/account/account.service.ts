@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { AccountRepository } from './account.repository';
@@ -8,6 +8,9 @@ import { OauthAccessTokenResponseDto } from '../oauth/dto/oauth-access-token-res
 import { API_ACCOUNTS_URL } from '../lib/constants';
 import { OauthUserRepository } from '../oauth/oauth-user.repository';
 import { SectionRepository } from '../section/section.repository';
+import { plainToInstance } from 'class-transformer';
+import { AccountEntity } from './entities/account.entity';
+import { getPastDateTimeByMinutes } from '../lib/helper';
 
 @Injectable()
 export class AccountService {
@@ -29,13 +32,32 @@ export class AccountService {
   }
 
   async refresh(userIdx: number, sectionIdx: number) {
-    const whooingAccessData: OauthAccessTokenResponseDto =
-      await this.oauthUserRepository.findOne(userIdx);
+    const sectionId: string = (await this.sectionRepository.findOne(sectionIdx))
+      .whooing_section_id;
 
-    const sectionId: string = await this.sectionRepository.findOne(sectionIdx);
+    const accountInfo: AccountEntity | undefined =
+      await this.accountRepository.findOneByWhooingSectionId(sectionId);
+    const now = new Date();
+    const fiveMinutesAgo = getPastDateTimeByMinutes(5);
+    if (accountInfo.updated_last > fiveMinutesAgo) {
+      // 지나치게 잦은 업데이트 요청을 방지하기 위해 마지막 update가 5분도 안 지났다면 에러 리턴
+      throw new BadRequestException(
+        'You requested too often(please try again 5 minutes later).',
+      );
+    }
+    // return false;
+
+    const whooingAccessData: OauthAccessTokenResponseDto = plainToInstance(
+      OauthAccessTokenResponseDto,
+      await this.oauthUserRepository.findOne(userIdx),
+      {
+        excludeExtraneousValues: true,
+      },
+    ); // snake_case -> camelCase
     const whooingAccountData: WhooingAccountResponseDto =
       await this.getWhooingAccountInfo(sectionId, whooingAccessData);
-    const accountData: CreateAccountDto | UpdateAccountDto = {
+    const createAccountData: CreateAccountDto = {
+      section_idx: sectionIdx,
       section_id: sectionId,
       assets: JSON.stringify(whooingAccountData.assets),
       liabilities: JSON.stringify(whooingAccountData.liabilities),
@@ -43,14 +65,15 @@ export class AccountService {
       income: JSON.stringify(whooingAccountData.income),
       expenses: JSON.stringify(whooingAccountData.expenses),
     };
-    const accountIdx: number = (
-      await this.accountRepository.findOneByWhooingSectionId(sectionId)
-    ).account_idx;
 
-    if (accountIdx === undefined) {
-      return await this.create(accountData);
+    if (accountInfo === undefined) {
+      return await this.create(createAccountData);
     } else {
-      return await this.update(accountIdx, accountData);
+      const updateAccountData: UpdateAccountDto = {
+        ...createAccountData,
+        updated_last: now,
+      };
+      return await this.update(accountInfo.account_idx, updateAccountData);
     }
   }
 
@@ -67,10 +90,15 @@ export class AccountService {
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
     const createAccountList: CreateAccountDto[] = [];
-    sectionIds.forEach(async (sectionId) => {
+    for (const sectionId of sectionIds) {
       const accountData: WhooingAccountResponseDto =
         await this.getWhooingAccountInfo(sectionId, whooingAccessData);
+
+      const sectionIdx: number = (
+        await this.sectionRepository.findOneByWhooingSectionId(sectionId)
+      ).section_idx;
       const createAccountData: CreateAccountDto = {
+        section_idx: sectionIdx,
         section_id: sectionId,
         assets: JSON.stringify(accountData.assets),
         liabilities: JSON.stringify(accountData.liabilities),
@@ -79,13 +107,13 @@ export class AccountService {
         expenses: JSON.stringify(accountData.expenses),
       };
       createAccountList.push(createAccountData);
-    });
+    }
 
     return this.accountRepository.createMany(createAccountList);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  async findOneBySectionIdx(sectionIdx: number) {
+    return await this.accountRepository.findOneBySectionIdx(sectionIdx);
   }
 
   remove(id: number) {

@@ -41,7 +41,6 @@ export class WhooingResourceApiService {
         if (response.data.code !== 200) {
           throw new BadRequestException(response.data.message);
         }
-        console.log(response.data.results);
         return response.data.results;
       })
       .catch((error) => {

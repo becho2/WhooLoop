@@ -12,14 +12,21 @@ export class AccountEntity {
   @Expose()
   account_idx: number;
 
-  /** 연결된 section_idx FK */
   @ApiProperty({
     type: 'number',
-    description: '연결된 section_idx FK',
+    description: 'section_idx',
     required: true,
   })
   @Expose()
   section_idx: number;
+
+  @ApiProperty({
+    type: 'number',
+    description: '연결된 whooing section_id FK',
+    required: true,
+  })
+  @Expose()
+  section_id: string;
 
   /** 자산 계정항목 */
   @ApiProperty({

@@ -21,13 +21,14 @@ export class AccountController {
 
   @Post()
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  async refresh(@Request() req: any, @Body() sectionIdx: number) {
-    return await this.accountService.refresh(req.user.idx, sectionIdx);
+  async refresh(@Request() req: any, @Body() body: { sectionIdx: number }) {
+    return await this.accountService.refresh(req.user.idx, body.sectionIdx);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accountService.findOne(+id);
+  @Get(':sectionIdx')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async findOne(@Param('sectionIdx') sectionIdx: string) {
+    return await this.accountService.findOneBySectionIdx(+sectionIdx);
   }
 
   @Delete(':id')
