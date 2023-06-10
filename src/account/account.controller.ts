@@ -32,9 +32,13 @@ export class AccountController {
   @Get(':sectionIdx')
   @UseGuards(AuthGuard('jwtAccessGuard'))
   async findOne(
+    @Request() req: any,
     @Param('sectionIdx') sectionIdx: string,
   ): Promise<SelectAccountOutputDto> {
-    return await this.accountService.findOneBySectionIdx(+sectionIdx);
+    return await this.accountService.findOneBySectionIdx(
+      req.user.idx,
+      +sectionIdx,
+    );
   }
 
   @Delete(':id')

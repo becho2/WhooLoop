@@ -73,7 +73,7 @@ export class AccountService {
     if (accountInfo === undefined) {
       // 기존 정보가 없을 경우 create, 있으면 update
       if (await this.create(createAccountData)) {
-        return this.findOneBySectionIdx(sectionIdx);
+        return this.findOneBySectionIdx(userIdx, sectionIdx);
       }
     } else {
       const updateAccountData: UpdateAccountDto = {
@@ -81,7 +81,7 @@ export class AccountService {
         updated_last: now,
       };
       if (await this.update(accountInfo.account_idx, updateAccountData)) {
-        return this.findOneBySectionIdx(sectionIdx);
+        return this.findOneBySectionIdx(userIdx, sectionIdx);
       }
     }
   }
@@ -122,10 +122,30 @@ export class AccountService {
   }
 
   async findOneBySectionIdx(
+    userIdx: number,
     sectionIdx: number,
   ): Promise<SelectAccountOutputDto> {
-    const accountStrings: AccountEntity =
-      await this.accountRepository.findOneBySectionIdx(sectionIdx);
+    let accountStrings: AccountEntity | undefined;
+    accountStrings = await this.accountRepository.findOneBySectionIdx(
+      sectionIdx,
+    );
+
+    if (!accountStrings) {
+      const sectionId: string = (
+        await this.sectionRepository.findOne(sectionIdx)
+      ).whooing_section_id;
+      const whooingAccessData: OauthAccessTokenResponseDto = plainToInstance(
+        OauthAccessTokenResponseDto,
+        await this.oauthUserRepository.findOne(userIdx),
+        {
+          excludeExtraneousValues: true,
+        },
+      ); // snake_case -> camelCase
+      await this.createMany([sectionId], whooingAccessData);
+      accountStrings = await this.accountRepository.findOneBySectionIdx(
+        sectionIdx,
+      );
+    }
 
     const selectOutputDto: SelectAccountOutputDto = {
       assets: this.parseAndReturnOnlyTitlesOfAccounts(accountStrings.assets),
