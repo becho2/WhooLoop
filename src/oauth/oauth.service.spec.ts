@@ -7,6 +7,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
 import { SectionService } from '../section/section.service';
 import { SectionRepository } from '../section/section.repository';
+import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
+import { AccountService } from '../account/account.service';
+import { AccountRepository } from '../account/account.repository';
 
 describe('OauthService', () => {
   let service: OauthService;
@@ -20,6 +23,9 @@ describe('OauthService', () => {
         OauthUserRepository,
         SectionService,
         SectionRepository,
+        AccountService,
+        AccountRepository,
+        WhooingResourceApiService,
       ],
     }).compile();
 

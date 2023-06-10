@@ -10,10 +10,9 @@ import { CreateOauthUserDto } from './dto/create-oauth-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateOauthUserDto } from './dto/update-oauth-user.dto';
 import { AuthService } from '../auth/auth.service';
-import * as crypto from 'crypto';
-import { API_SECTIONS_URL } from '../lib/constants';
 import { SectionService } from '../section/section.service';
-import { UpdateSectionDto } from '../section/dto/update-section.dto';
+import { AccountService } from '../account/account.service';
+import { WhooingSectionResponseDto } from '../section/dto/whooing-section-response.dto';
 
 @Injectable()
 export class OauthService {
@@ -21,6 +20,7 @@ export class OauthService {
     private readonly oauthUserRepository: OauthUserRepository,
     private readonly authService: AuthService,
     private readonly sectionService: SectionService,
+    private readonly accountService: AccountService,
   ) {}
   /**
    * 후잉 Oauth Service 이용을 위한 첫단계, 이 앱의 ID, Secret을 통해 token을 받고
@@ -85,10 +85,7 @@ export class OauthService {
         this.updateOauthUser(user.user_idx, whooingAccessData);
       }
       userIdx = user.user_idx;
-      // 이미 등록된 유저일 때, 기존에 등록된 섹션 외에 새로운 섹션이 생겼는지 확인해서 추가 insert
-      await this.addSections(userIdx, whooingAccessData);
-      // @TODO (우선순위: Low) 이미 등록된 섹션 중 이름이 변경된 섹션 확인해서 update
-      // await this.updateSections(userIdx, whooingAccessData);
+      await this.afterLogin(userIdx, whooingAccessData);
     }
 
     return this.authService.getAccessToken(
@@ -107,53 +104,27 @@ export class OauthService {
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
     // 해당 후잉 계정에 속한 섹션 리스트를 불러와서 저장한다
-    const sectionList = await this.resourceApiRequest(
-      API_SECTIONS_URL,
-      whooingAccessData,
-    );
-    await this.sectionService.createWhooingSections(userIdx, sectionList);
+    const sectionList: WhooingSectionResponseDto[] =
+      await this.sectionService.getWhooingSectionInfo(whooingAccessData);
+    const sectionIds: string[] =
+      await this.sectionService.createWhooingSections(userIdx, sectionList);
+
+    // 각 섹션별 항목들을 불러와 저장한다
+    await this.accountService.createMany(sectionIds, whooingAccessData);
   }
 
-  /**
-   * 기존에 없던 추가된 섹션 찾아서 추가
-   * @param userIdx
-   * @param whooingAccessData
-   */
-  async addSections(
+  async afterLogin(
     userIdx: number,
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
-    // 기존 입력돼있는 섹션리스트 불러오기
-    const prevSectionList = await this.sectionService.findAll(userIdx);
-    const prevSectionIds: string[] = prevSectionList.map(
-      (section) => section.whooing_section_id,
-    );
-
+    // 이미 등록된 유저일 때, 기존에 등록된 섹션 외에 새로운 섹션이 생겼는지 확인해서 추가 insert
     // 현재 해당 후잉계정의 섹션리스트 가져오기
-    const nowSectionList = await this.resourceApiRequest(
-      API_SECTIONS_URL,
-      whooingAccessData,
-    );
-    const nowSectionIds = nowSectionList.map(
-      (section: any) => section.section_id,
-    );
+    const nowSectionList: WhooingSectionResponseDto[] =
+      await this.sectionService.getWhooingSectionInfo(whooingAccessData);
 
-    // 기존 섹션리스트와 현재 섹션 리스트의 whooing section_id 값을 비교해서 기존에 없던 새로운 id만 찾기
-    const sectionIdsNeedToBeAdded: UpdateSectionDto[] = nowSectionIds.filter(
-      (id: string) => !prevSectionIds.includes(id),
-    );
-    if (sectionIdsNeedToBeAdded.length === 0) {
-      return false;
-    }
-    // 기존에 없던 새로운 id를 가진 섹션정보만 남긴 리스트 생성
-    const sectionsNeedToBeAdded = nowSectionList.filter((section: any) =>
-      sectionIdsNeedToBeAdded.includes(section.section_id),
-    );
-
-    await this.sectionService.createWhooingSections(
-      userIdx,
-      sectionsNeedToBeAdded,
-    );
+    await this.sectionService.addSections(userIdx, nowSectionList);
+    // @TODO (우선순위: Low) 이미 등록된 섹션 중 이름이 변경된 섹션 확인해서 update
+    // await this.updateSections(userIdx, whooingAccessData);
   }
 
   // @TODO (우선순위: Low) 이미 등록돼있는 섹션 이름이 변경됐을 경우 update
@@ -196,50 +167,6 @@ export class OauthService {
   //     return true;
   //   }
   // }
-
-  async resourceApiRequest(
-    url: string,
-    whooingAccessData: OauthAccessTokenResponseDto,
-  ) {
-    const signature = crypto
-      .createHash('sha1')
-      .update(
-        `${process.env.WHOOING_APP_SECRET}|${whooingAccessData.whooingAccessTokenSecret}`,
-      )
-      .digest('hex');
-    const data = {
-      app_id: process.env.WHOOING_APP_ID,
-      token: whooingAccessData.whooingAccessToken,
-      signiture: signature,
-      nounce: `${+new Date()}-${Math.random()}`,
-      timestamp: +new Date() / 1000,
-    };
-
-    const xApiKey = Object.keys(data).map((k) => {
-      return `${k}=${data[k]}`;
-    });
-    const requestConfig = {
-      method: 'get',
-      url: url,
-      headers: {
-        'x-api-key': xApiKey.join(','),
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    };
-    return await axios
-      .request(requestConfig)
-      .then((response) => {
-        if (response.data.code !== 200) {
-          throw new BadRequestException(response.data.message);
-        }
-        console.log(response.data.results);
-        return response.data.results;
-      })
-      .catch((error) => {
-        console.log(error);
-        throw new BadRequestException(error.message);
-      });
-  }
 
   async getAccessData(
     oauthLogin: OauthLoginInputDto,

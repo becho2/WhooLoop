@@ -7,6 +7,9 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { SectionService } from '../section/section.service';
 import { SectionRepository } from '../section/section.repository';
+import { AccountService } from '../account/account.service';
+import { AccountRepository } from '../account/account.repository';
+import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
 
 @Module({
   imports: [DBModule, JwtModule.register({})],
@@ -17,6 +20,9 @@ import { SectionRepository } from '../section/section.repository';
     SectionService,
     OauthUserRepository,
     SectionRepository,
+    AccountService,
+    AccountRepository,
+    WhooingResourceApiService,
   ],
 })
 export class OauthModule {}
