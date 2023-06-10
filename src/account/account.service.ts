@@ -10,7 +10,7 @@ import { OauthUserRepository } from '../oauth/oauth-user.repository';
 import { SectionRepository } from '../section/section.repository';
 import { plainToInstance } from 'class-transformer';
 import { AccountEntity } from './entities/account.entity';
-import { getPastDateTimeByMinutes } from '../lib/helper';
+import { getPastDateTimeByMinutes, getToday } from '../lib/helper';
 import { SelectAccountOutputDto } from './dto/select-account-output.dto';
 import { WhooingAccountUnitDto } from './dto/whooing-account-unit.dto';
 
@@ -124,28 +124,41 @@ export class AccountService {
   async findOneBySectionIdx(
     sectionIdx: number,
   ): Promise<SelectAccountOutputDto> {
-    const accountString: AccountEntity =
+    const accountStrings: AccountEntity =
       await this.accountRepository.findOneBySectionIdx(sectionIdx);
 
-    const assets = JSON.parse(accountString.assets);
-    const liabilities = JSON.parse(accountString.liabilities);
-    const capital = accountString.capital
-      ? JSON.parse(accountString.capital)
-      : [];
-    const expenses = JSON.parse(accountString.expenses);
-    const income = JSON.parse(accountString.income);
-
     const selectOutputDto: SelectAccountOutputDto = {
-      assets: assets.map((asset: WhooingAccountUnitDto) => asset.title),
-      liabilities: liabilities.map(
-        (asset: WhooingAccountUnitDto) => asset.title,
+      assets: this.parseAndReturnOnlyTitlesOfAccounts(accountStrings.assets),
+      liabilities: this.parseAndReturnOnlyTitlesOfAccounts(
+        accountStrings.liabilities,
       ),
-      capital: capital.map((asset: WhooingAccountUnitDto) => asset.title),
-      expenses: expenses.map((asset: WhooingAccountUnitDto) => asset.title),
-      income: income.map((asset: WhooingAccountUnitDto) => asset.title),
+      capital: this.parseAndReturnOnlyTitlesOfAccounts(accountStrings.capital),
+      expenses: this.parseAndReturnOnlyTitlesOfAccounts(
+        accountStrings.expenses,
+      ),
+      income: this.parseAndReturnOnlyTitlesOfAccounts(accountStrings.income),
     };
 
     return selectOutputDto;
+  }
+
+  /**
+   * 1. open_date가 오늘보다 예전 날짜, close_date가 오늘보다 나중 날짜
+   * 2. type이 group이 아닌 값만
+   * 3. title만 들어있는 Array 리턴
+   */
+  parseAndReturnOnlyTitlesOfAccounts(accountProperty: string): string[] {
+    const account = accountProperty ? JSON.parse(accountProperty) : [];
+
+    const today = getToday();
+    return account
+      .filter(
+        (element: WhooingAccountUnitDto) =>
+          element.type !== 'group' &&
+          element.open_date < +today &&
+          element.close_date > +today,
+      )
+      .map((element: WhooingAccountUnitDto) => element.title);
   }
 
   remove(id: number) {
