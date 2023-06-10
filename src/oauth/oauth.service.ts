@@ -13,7 +13,6 @@ import { AuthService } from '../auth/auth.service';
 import * as crypto from 'crypto';
 import { API_SECTIONS_URL } from '../lib/constants';
 import { SectionService } from '../section/section.service';
-import { CreateSectionDto } from '../section/dto/create-section.dto';
 import { UpdateSectionDto } from '../section/dto/update-section.dto';
 
 @Injectable()
@@ -112,7 +111,7 @@ export class OauthService {
       API_SECTIONS_URL,
       whooingAccessData,
     );
-    await this.createWhooingSections(userIdx, sectionList);
+    await this.sectionService.createWhooingSections(userIdx, sectionList);
   }
 
   /**
@@ -151,27 +150,10 @@ export class OauthService {
       sectionIdsNeedToBeAdded.includes(section.section_id),
     );
 
-    await this.createWhooingSections(userIdx, sectionsNeedToBeAdded);
-  }
-
-  /**
-   * @param userIdx
-   * @param whooingAccessData
-   */
-  async createWhooingSections(userIdx: number, whooingSectionList: any) {
-    const createSectionList: CreateSectionDto[] = [];
-    whooingSectionList.forEach((section: any, index: number) => {
-      const createSectionData: CreateSectionDto = {
-        user_idx: userIdx,
-        section_name: section.title,
-        whooing_section_id: section.section_id,
-        whooing_webhook_token: section.webhook_token,
-        sort_no: index,
-      };
-      createSectionList.push(createSectionData);
-    });
-
-    this.sectionService.createMany(createSectionList);
+    await this.sectionService.createWhooingSections(
+      userIdx,
+      sectionsNeedToBeAdded,
+    );
   }
 
   // @TODO (우선순위: Low) 이미 등록돼있는 섹션 이름이 변경됐을 경우 update

@@ -43,4 +43,24 @@ export class SectionService {
   async remove(idx: number, userIdx: number): Promise<boolean> {
     return await this.sectionRepository.remove(idx, userIdx);
   }
+
+  /**
+   * @param userIdx
+   * @param whooingAccessData
+   */
+  async createWhooingSections(userIdx: number, whooingSectionList: any) {
+    const createSectionList: CreateSectionDto[] = [];
+    whooingSectionList.forEach((section: any, index: number) => {
+      const createSectionData: CreateSectionDto = {
+        user_idx: userIdx,
+        section_name: section.title,
+        whooing_section_id: section.section_id,
+        whooing_webhook_token: section.webhook_token,
+        sort_no: index,
+      };
+      createSectionList.push(createSectionData);
+    });
+
+    this.createMany(createSectionList);
+  }
 }
