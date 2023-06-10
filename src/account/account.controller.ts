@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * account = 후잉 계정항목을 뜻함
@@ -20,13 +20,9 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post()
-  create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountService.create(createAccountDto);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountService.update(+id, updateAccountDto);
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async refresh(@Request() req: any, @Body() sectionIdx: number) {
+    return await this.accountService.refresh(req.user.idx, sectionIdx);
   }
 
   @Get(':id')

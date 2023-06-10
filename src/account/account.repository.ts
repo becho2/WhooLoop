@@ -22,26 +22,17 @@ export class AccountRepository {
       .into(this.accountTable);
   }
 
-  async update(idx: number, updateAccountDto: UpdateAccountDto) {
+  async update(accountIdx: number, updateAccountDto: UpdateAccountDto) {
     return await this.dbService
       .mysql(this.accountTable)
-      .where('account_idx', idx)
+      .where('account_idx', accountIdx)
       .update(updateAccountDto);
   }
 
-  async findOne(idx: number) {
+  async findOneByWhooingSectionId(sectionId: string): Promise<AccountEntity> {
     const sql = this.dbService.mysql
-      .select('email')
-      .where('user_idx', idx)
-      .from<AccountEntity>(this.accountTable);
-    const [rows] = await sql;
-    return rows;
-  }
-
-  async findOneByEmail(email: string): Promise<AccountEntity> {
-    const sql = this.dbService.mysql
-      .select('user_idx', 'password')
-      .where('email', email)
+      .select('account_idx')
+      .where('section_id', sectionId)
       .from<AccountEntity>(this.accountTable);
     const [rows] = await sql;
     return rows;

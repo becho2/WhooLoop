@@ -4,6 +4,8 @@ import { AccountService } from './account.service';
 import { AccountRepository } from './account.repository';
 import { DBModule } from '../lib/db/db.module';
 import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
+import { OauthUserRepository } from '../oauth/oauth-user.repository';
+import { SectionRepository } from '../section/section.repository';
 
 describe('AccountController', () => {
   let controller: AccountController;
@@ -12,7 +14,13 @@ describe('AccountController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DBModule],
       controllers: [AccountController],
-      providers: [AccountService, AccountRepository, WhooingResourceApiService],
+      providers: [
+        AccountService,
+        AccountRepository,
+        WhooingResourceApiService,
+        OauthUserRepository,
+        SectionRepository,
+      ],
     }).compile();
 
     controller = module.get<AccountController>(AccountController);

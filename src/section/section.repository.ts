@@ -47,19 +47,10 @@ export class SectionRepository {
     return rows;
   }
 
-  async findOne(idx: number) {
+  async findOne(idx: number): Promise<string> {
     const sql = this.dbService.mysql
-      .select('email')
-      .where('user_idx', idx)
-      .from<SectionEntity>(this.sectionTable);
-    const [rows] = await sql;
-    return rows;
-  }
-
-  async findOneByEmail(email: string): Promise<SectionEntity> {
-    const sql = this.dbService.mysql
-      .select('user_idx', 'password')
-      .where('email', email)
+      .select('whooing_section_id')
+      .where('section_idx', idx)
       .from<SectionEntity>(this.sectionTable);
     const [rows] = await sql;
     return rows;

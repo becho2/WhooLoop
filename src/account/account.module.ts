@@ -4,6 +4,8 @@ import { AccountController } from './account.controller';
 import { AccountRepository } from './account.repository';
 import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
 import { DBModule } from '../lib/db/db.module';
+import { OauthUserRepository } from '../oauth/oauth-user.repository';
+import { SectionRepository } from '../section/section.repository';
 
 /**
  * account = 후잉 계정항목을 뜻함
@@ -12,6 +14,12 @@ import { DBModule } from '../lib/db/db.module';
 @Module({
   imports: [DBModule],
   controllers: [AccountController],
-  providers: [AccountService, AccountRepository, WhooingResourceApiService],
+  providers: [
+    AccountService,
+    AccountRepository,
+    WhooingResourceApiService,
+    OauthUserRepository,
+    SectionRepository,
+  ],
 })
 export class AccountModule {}
