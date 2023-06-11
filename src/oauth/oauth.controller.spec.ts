@@ -10,6 +10,7 @@ import { SectionRepository } from '../section/section.repository';
 import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
 import { AccountService } from '../account/account.service';
 import { AccountRepository } from '../account/account.repository';
+import { FrequentItemsRepository } from '../account/frequent-items.repository';
 
 describe('OauthController', () => {
   let controller: OauthController;
@@ -27,6 +28,7 @@ describe('OauthController', () => {
         AccountService,
         AccountRepository,
         WhooingResourceApiService,
+        FrequentItemsRepository,
       ],
     }).compile();
 

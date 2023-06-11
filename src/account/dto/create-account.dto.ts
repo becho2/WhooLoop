@@ -13,7 +13,7 @@ export class CreateAccountDto {
 
   /** 연결된 section_id FK */
   @ApiProperty({
-    type: 'number',
+    type: 'string',
     description: '연결된 whooing section_id FK',
     required: true,
   })

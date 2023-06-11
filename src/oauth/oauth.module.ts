@@ -10,6 +10,7 @@ import { SectionRepository } from '../section/section.repository';
 import { AccountService } from '../account/account.service';
 import { AccountRepository } from '../account/account.repository';
 import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
+import { FrequentItemsRepository } from 'src/account/frequent-items.repository';
 
 @Module({
   imports: [DBModule, JwtModule.register({})],
@@ -23,6 +24,7 @@ import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-r
     AccountService,
     AccountRepository,
     WhooingResourceApiService,
+    FrequentItemsRepository,
   ],
 })
 export class OauthModule {}

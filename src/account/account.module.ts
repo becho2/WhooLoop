@@ -6,6 +6,7 @@ import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-r
 import { DBModule } from '../lib/db/db.module';
 import { OauthUserRepository } from '../oauth/oauth-user.repository';
 import { SectionRepository } from '../section/section.repository';
+import { FrequentItemsRepository } from './frequent-items.repository';
 
 /**
  * account = 후잉 계정항목을 뜻함
@@ -20,6 +21,7 @@ import { SectionRepository } from '../section/section.repository';
     WhooingResourceApiService,
     OauthUserRepository,
     SectionRepository,
+    FrequentItemsRepository,
   ],
 })
 export class AccountModule {}

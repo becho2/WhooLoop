@@ -6,6 +6,7 @@ import { DBModule } from '../lib/db/db.module';
 import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
 import { OauthUserRepository } from '../oauth/oauth-user.repository';
 import { SectionRepository } from '../section/section.repository';
+import { FrequentItemsRepository } from './frequent-items.repository';
 
 describe('AccountController', () => {
   let controller: AccountController;
@@ -20,6 +21,7 @@ describe('AccountController', () => {
         WhooingResourceApiService,
         OauthUserRepository,
         SectionRepository,
+        FrequentItemsRepository,
       ],
     }).compile();
 
