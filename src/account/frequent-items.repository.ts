@@ -14,6 +14,13 @@ export class FrequentItemsRepository {
       .into(this.frequentItemsTable);
   }
 
+  async findFrequentItemsByWhooingSectionId(sectionId: string): Promise<any> {
+    return this.dbService.mysql
+      .select('item', 'money', 'left', 'right')
+      .where('section_id', sectionId)
+      .from<any>(this.frequentItemsTable);
+  }
+
   async deleteManyBySectionId(sectionId: string) {
     await this.dbService
       .mysql(this.frequentItemsTable)

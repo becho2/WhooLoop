@@ -59,7 +59,7 @@ export class SectionRepository {
   async findOneByWhooingSectionId(id: string): Promise<SectionEntity> {
     const sql = this.dbService.mysql
       .select('section_idx')
-      .where('whooing_section_id', id)
+      .where({ whooing_section_id: id })
       .from<SectionEntity>(this.sectionTable);
     const [rows] = await sql;
     return rows;

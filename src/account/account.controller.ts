@@ -11,6 +11,7 @@ import {
 import { AccountService } from './account.service';
 import { AuthGuard } from '@nestjs/passport';
 import { SelectAccountOutputDto } from './dto/select-account-output.dto';
+import { SelectFrequentItemsOutputDto } from './dto/select-frequent-items-output.dto';
 
 /**
  * account = 후잉 계정항목을 뜻함
@@ -29,7 +30,7 @@ export class AccountController {
     return await this.accountService.refresh(req.user.idx, body.sectionIdx);
   }
 
-  @Get(':sectionIdx')
+  @Get(':sectionIdx/accounts')
   @UseGuards(AuthGuard('jwtAccessGuard'))
   async findOne(
     @Request() req: any,
@@ -39,6 +40,14 @@ export class AccountController {
       req.user.idx,
       +sectionIdx,
     );
+  }
+
+  @Get(':sectionIdx/frequents')
+  @UseGuards(AuthGuard('jwtAccessGuard'))
+  async findFrequentItems(
+    @Param('sectionIdx') sectionIdx: string,
+  ): Promise<SelectFrequentItemsOutputDto[]> {
+    return await this.accountService.findFrequentItemsBySectionIdx(+sectionIdx);
   }
 
   @Delete(':id')

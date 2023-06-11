@@ -21,6 +21,7 @@ import { WhooingFrequentItemsResponseDto } from './dto/whooing-frequent-items-re
 import { CreateFrequentItemDto } from './dto/create-frequent-item.dto';
 import { WhooingFrequentItemDto } from './dto/whooing-frequent-item.dto';
 import { FrequentItemsRepository } from './frequent-items.repository';
+import { SelectFrequentItemsOutputDto } from './dto/select-frequent-items-output.dto';
 
 @Injectable()
 export class AccountService {
@@ -136,10 +137,13 @@ export class AccountService {
         updated_last: now,
       };
       if (await this.update(accountInfo.account_idx, updateAccountData)) {
-        await this.frequentItemsRepository.deleteManyBySectionId(sectionId);
-        await this.frequentItemsRepository.createMany(
-          createFrequentItemDtoList,
-        );
+        if (createFrequentItemDtoList.length > 0) {
+          await this.frequentItemsRepository.deleteManyBySectionId(sectionId);
+          await this.frequentItemsRepository.createMany(
+            createFrequentItemDtoList,
+          );
+        }
+
         return this.findOneBySectionIdx(userIdx, sectionIdx);
       }
     }
@@ -287,6 +291,23 @@ export class AccountService {
           element.close_date > +today,
       )
       .map((element: WhooingAccountUnitDto) => element.title);
+  }
+
+  async findFrequentItemsBySectionIdx(
+    sectionIdx: number,
+  ): Promise<SelectFrequentItemsOutputDto[]> {
+    let selectOutputDtoList: SelectFrequentItemsOutputDto[] = [];
+    const sectionId: string = (await this.sectionRepository.findOne(sectionIdx))
+      .whooing_section_id;
+    selectOutputDtoList =
+      await this.frequentItemsRepository.findFrequentItemsByWhooingSectionId(
+        sectionId,
+      );
+
+    if (!selectOutputDtoList) {
+      selectOutputDtoList = [];
+    }
+    return selectOutputDtoList;
   }
 
   remove(id: number) {
