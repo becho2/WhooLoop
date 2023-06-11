@@ -98,7 +98,49 @@ export class AccountService {
     const whooingFrequentItems: WhooingFrequentItemsResponseDto =
       await this.getWhooingFrequentItemsInfo(sectionId, whooingAccessData);
 
-    // 후잉에서 가져온 자주입력거래 정보를 후룹 DB에 맞게 가공 @TODO slot 1, 2, 3 반복코드 리팩토링 필요
+    const createFrequentItemDtoList: CreateFrequentItemDto[] =
+      this.makeCreateFreqeuntItemDtoList(
+        whooingFrequentItems,
+        whooingAccountData,
+        sectionId,
+      );
+
+    if (accountInfo === undefined) {
+      // 기존 정보가 없을 경우 create, 있으면 update
+      if (await this.create(createAccountData)) {
+        if (createFrequentItemDtoList.length > 0) {
+          // 데이터가 없을 경우 insert쿼리가 날아가면 에러
+          await this.frequentItemsRepository.createMany(
+            createFrequentItemDtoList,
+          );
+        }
+        return this.findOneBySectionIdx(userIdx, sectionIdx);
+      }
+    } else {
+      const updateAccountData: UpdateAccountDto = {
+        ...createAccountData,
+        updated_last: now,
+      };
+      if (await this.update(accountInfo.account_idx, updateAccountData)) {
+        if (createFrequentItemDtoList.length > 0) {
+          // 데이터가 없을 경우 insert쿼리가 날아가면 에러
+          await this.frequentItemsRepository.deleteManyBySectionId(sectionId);
+          await this.frequentItemsRepository.createMany(
+            createFrequentItemDtoList,
+          );
+        }
+
+        return this.findOneBySectionIdx(userIdx, sectionIdx);
+      }
+    }
+  }
+
+  // 후잉에서 가져온 자주입력거래 정보를 후룹 DB에 맞게 가공 @TODO slot 1, 2, 3 반복코드 리팩토링 필요
+  makeCreateFreqeuntItemDtoList(
+    whooingFrequentItems: WhooingFrequentItemsResponseDto,
+    whooingAccountData: WhooingAccountResponseDto,
+    sectionId: string,
+  ): CreateFrequentItemDto[] {
     const createFrequentItemDtoList: CreateFrequentItemDto[] = [];
     whooingFrequentItems.slot1?.forEach((item: WhooingFrequentItemDto) => {
       const leftTitle = this.getFrequentItemTitle(
@@ -167,30 +209,7 @@ export class AccountService {
       createFrequentItemDtoList.push(createFrequentItemData);
     });
 
-    if (accountInfo === undefined) {
-      // 기존 정보가 없을 경우 create, 있으면 update
-      if (await this.create(createAccountData)) {
-        await this.frequentItemsRepository.createMany(
-          createFrequentItemDtoList,
-        );
-        return this.findOneBySectionIdx(userIdx, sectionIdx);
-      }
-    } else {
-      const updateAccountData: UpdateAccountDto = {
-        ...createAccountData,
-        updated_last: now,
-      };
-      if (await this.update(accountInfo.account_idx, updateAccountData)) {
-        if (createFrequentItemDtoList.length > 0) {
-          await this.frequentItemsRepository.deleteManyBySectionId(sectionId);
-          await this.frequentItemsRepository.createMany(
-            createFrequentItemDtoList,
-          );
-        }
-
-        return this.findOneBySectionIdx(userIdx, sectionIdx);
-      }
-    }
+    return createFrequentItemDtoList;
   }
 
   getFrequentItemTitle(
@@ -246,11 +265,16 @@ export class AccountService {
     return this.accountRepository.update(accountIdx, updateAccountDto);
   }
 
+  /**
+   * 최초 OAuth 로그인시(계정생성)와 섹션을 선택했는데 섹션의 항목정보가 없을 때 실행되어
+   * 섹션의 항목정보 및 자주입력거래 정보를 가져와서 DB에 insert
+   */
   async createMany(
     sectionIds: string[],
     whooingAccessData: OauthAccessTokenResponseDto,
   ) {
     const createAccountList: CreateAccountDto[] = [];
+    let createFrequentItemDtoList: CreateFrequentItemDto[] = [];
     for (const sectionId of sectionIds) {
       const accountData: WhooingAccountResponseDto =
         await this.getWhooingAccountsInfo(sectionId, whooingAccessData);
@@ -268,8 +292,21 @@ export class AccountService {
         expenses: JSON.stringify(accountData.expenses),
       };
       createAccountList.push(createAccountData);
-    }
 
+      // 후잉에서 자주 입력거래 정보 가져오기
+      const whooingFrequentItems: WhooingFrequentItemsResponseDto =
+        await this.getWhooingFrequentItemsInfo(sectionId, whooingAccessData);
+
+      createFrequentItemDtoList = this.makeCreateFreqeuntItemDtoList(
+        whooingFrequentItems,
+        accountData,
+        sectionId,
+      );
+    }
+    if (createFrequentItemDtoList.length > 0) {
+      // 데이터가 없을 경우 insert쿼리가 날아가면 에러
+      await this.frequentItemsRepository.createMany(createFrequentItemDtoList);
+    }
     return this.accountRepository.createMany(createAccountList);
   }
 
