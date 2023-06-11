@@ -98,9 +98,53 @@ export class AccountService {
     const whooingFrequentItems: WhooingFrequentItemsResponseDto =
       await this.getWhooingFrequentItemsInfo(sectionId, whooingAccessData);
 
-    // 후잉에서 가져온 자주입력거래 정보를 후룹 DB에 맞게 가공
+    // 후잉에서 가져온 자주입력거래 정보를 후룹 DB에 맞게 가공 @TODO slot 1, 2, 3 반복코드 리팩토링 필요
     const createFrequentItemDtoList: CreateFrequentItemDto[] = [];
     whooingFrequentItems.slot1?.forEach((item: WhooingFrequentItemDto) => {
+      const leftTitle = this.getFrequentItemTitle(
+        whooingAccountData,
+        item.l_account,
+        item.l_account_id,
+      );
+      const rightTitle = this.getFrequentItemTitle(
+        whooingAccountData,
+        item.r_account,
+        item.r_account_id,
+      );
+      const createFrequentItemData: CreateFrequentItemDto = {
+        section_id: sectionId,
+        whooing_slot: WHOOING_FREQUENT_ITEMS_SLOT1,
+        whooing_item_id: item.item_id,
+        item: item.item,
+        money: item.money,
+        left: leftTitle,
+        right: rightTitle,
+      };
+      createFrequentItemDtoList.push(createFrequentItemData);
+    });
+    whooingFrequentItems.slot2?.forEach((item: WhooingFrequentItemDto) => {
+      const leftTitle = this.getFrequentItemTitle(
+        whooingAccountData,
+        item.l_account,
+        item.l_account_id,
+      );
+      const rightTitle = this.getFrequentItemTitle(
+        whooingAccountData,
+        item.r_account,
+        item.r_account_id,
+      );
+      const createFrequentItemData: CreateFrequentItemDto = {
+        section_id: sectionId,
+        whooing_slot: WHOOING_FREQUENT_ITEMS_SLOT1,
+        whooing_item_id: item.item_id,
+        item: item.item,
+        money: item.money,
+        left: leftTitle,
+        right: rightTitle,
+      };
+      createFrequentItemDtoList.push(createFrequentItemData);
+    });
+    whooingFrequentItems.slot3?.forEach((item: WhooingFrequentItemDto) => {
       const leftTitle = this.getFrequentItemTitle(
         whooingAccountData,
         item.l_account,
