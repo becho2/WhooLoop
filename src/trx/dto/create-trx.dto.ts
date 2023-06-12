@@ -11,6 +11,7 @@ export class CreateTrxDto extends PickType(TrxEntity, [
   'transaction_left',
   'transaction_right',
   'transaction_memo',
+  'expire_date',
 ]) {
   user_idx: number;
 }

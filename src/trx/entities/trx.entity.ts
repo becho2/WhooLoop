@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDate, IsEnum, IsOptional, Length } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString, Length } from 'class-validator';
 
 export class TrxEntity {
   /** transactionIdx */
@@ -122,6 +122,16 @@ export class TrxEntity {
   @Expose()
   @IsEnum(['ON', 'OFF'])
   work_status: string;
+
+  @ApiProperty({
+    type: 'string',
+    description: '마지막 반복거래일(종료일)',
+    example: '20230730',
+    required: true,
+  })
+  @Expose()
+  @IsString()
+  expire_date: string;
 
   /** isDeleted */
   @ApiProperty({
