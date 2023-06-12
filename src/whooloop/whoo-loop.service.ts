@@ -18,6 +18,13 @@ export class WhooLoopService {
     private readonly logRepository: LogRepository,
   ) {}
 
+  // 매일 23시 59분 35초에 오늘이 종료일인 거래 OFF 처리
+  @Cron('35 59 23 * * *')
+  async dailyCronForExpire() {
+    const today: string = getToday();
+    this.trxRepository.turnOffExpiredTrxs(today);
+  }
+
   @Cron('5 * * * * *') // 매분 5초마다
   async cronByMinute() {
     const dataList: WhooingInputData[] = await this._getDataListByTime();

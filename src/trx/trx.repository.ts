@@ -98,12 +98,24 @@ export class TrxRepository {
     return true;
   }
 
+  async turnOffExpiredTrxs(today: string) {
+    await this.dbService
+      .mysql(this.trxTable)
+      .where({ expire_date: today })
+      .update({
+        work_status: 'OFF',
+        updated_last: new Date(),
+      });
+    return true;
+  }
+
   async remove(idx: number, userIdx: number): Promise<boolean> {
     await this.dbService
       .mysql(this.trxTable)
       .where({ transaction_idx: idx, user_idx: userIdx })
       .update({
         is_deleted: 'Y',
+        updated_last: new Date(),
       });
     return true;
   }
