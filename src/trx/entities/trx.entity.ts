@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsDate, IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class TrxEntity {
   /** transactionIdx */
@@ -80,6 +87,7 @@ export class TrxEntity {
     required: true,
   })
   @Expose()
+  @IsNumber()
   transaction_money_amount: number;
 
   /** 후잉 좌변(비용) */
@@ -130,6 +138,7 @@ export class TrxEntity {
     required: true,
   })
   @Expose()
+  @Length(8)
   @IsString()
   expire_date: string;
 
