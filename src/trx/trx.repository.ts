@@ -30,6 +30,7 @@ export class TrxRepository {
         'transaction_right',
         'transaction_memo',
         'work_status',
+        'expire_date',
       )
       .where({
         user_idx: userIdx,
