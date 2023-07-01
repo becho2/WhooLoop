@@ -48,18 +48,7 @@ export class WhooLoopService {
 
   // whooing으로 입력할 값 전송
   private _sendWhooingInput(data: WhooingInputData): void {
-    const whooingInputForm: WhooingInputForm = {
-      entry_date: data.entry_date,
-      item: data.item,
-      money: data.money,
-      left: data.left,
-      right: data.right,
-      memo:
-        data.memo +
-        ' / ' +
-        getDateTimeNow() +
-        ' - WhooLoop( http://146.56.136.6:5173/ )에서 후잉 webhook을 통해 입력되었습니다.',
-    };
+    const whooingInputForm: WhooingInputForm = this._makeWhooingInputForm(data);
     const dataJson = JSON.stringify(whooingInputForm);
 
     const config = {
@@ -72,6 +61,7 @@ export class WhooLoopService {
       data: dataJson,
     };
 
+    // 로그 저장 준비
     const logData = new LogEntity();
     logData.request_url = config.url;
     logData.request_body = dataJson;
@@ -86,7 +76,38 @@ export class WhooLoopService {
       .catch((error) => {
         logData.response_body = error.data;
         this.logRepository.create(logData);
+        this._sendErrorAlarmByWhooingMessage(logData);
       });
+  }
+
+  private _makeWhooingInputForm(data: WhooingInputData): WhooingInputForm {
+    return {
+      entry_date: data.entry_date,
+      item: data.item,
+      money: data.money,
+      left: data.left,
+      right: data.right,
+      memo:
+        data.memo +
+        ' / ' +
+        getDateTimeNow() +
+        ' - WhooLoop( http://146.56.136.6:5173/ )에서 후잉 webhook을 통해 입력되었습니다.',
+    };
+  }
+
+  private _sendErrorAlarmByWhooingMessage(logData: LogEntity): void {
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: WHOOING_WEBHOOK_BASE_URL + logData.webhook_token,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        title: 'WhooLoop 오류',
+        content: `WhooLoop( http://`,
+      },
+    };
   }
 
   private async _getDataListByTime(): Promise<WhooingInputData[]> {
