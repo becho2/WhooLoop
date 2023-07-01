@@ -25,17 +25,22 @@ export class WhooLoopService {
     this.trxRepository.turnOffExpiredTrxs(today);
   }
 
-  @Cron('5 * * * * *') // 매분 5초마다
+  @Cron('3 * * * * *') // 매분 3초마다
   async cronByMinute() {
     const dataList: WhooingInputData[] = await this._getDataListByTime();
-    if (dataList.length > 0) {
+    // dataList의 entry_date에 오늘 날짜를 넣어줌
+    const today = getToday();
+    dataList.forEach((data) => {
+      data.entry_date = today;
+    });
+
+    if (dataList.length > 10) {
+      // 한번에 10개 이상의 웹훅 요청할 경우 for반복문으로 좀 더 천천히 요청되도록 함
+      for (const data of dataList) {
+        this._sendWhooingInput(data);
+      }
+    } else if (dataList.length > 0) {
       dataList.forEach((data) => {
-        data.entry_date = getToday();
-        data.memo =
-          data.memo +
-          ' / ' +
-          getDateTimeNow() +
-          ' - WhooLoop( http://146.56.136.6:5173/ )에서 후잉 webhook을 통해 입력되었습니다.';
         this._sendWhooingInput(data);
       });
     }
@@ -49,7 +54,11 @@ export class WhooLoopService {
       money: data.money,
       left: data.left,
       right: data.right,
-      memo: data.memo,
+      memo:
+        data.memo +
+        ' / ' +
+        getDateTimeNow() +
+        ' - WhooLoop( http://146.56.136.6:5173/ )에서 후잉 webhook을 통해 입력되었습니다.',
     };
     const dataJson = JSON.stringify(whooingInputForm);
 
@@ -71,14 +80,12 @@ export class WhooLoopService {
     axios
       .request(config)
       .then((response) => {
-        logData.response_body = JSON.stringify(response);
+        logData.response_body = response.data;
         this.logRepository.create(logData);
-        console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
-        logData.response_body = JSON.stringify(error);
+        logData.response_body = error.data;
         this.logRepository.create(logData);
-        console.log(error);
       });
   }
 
