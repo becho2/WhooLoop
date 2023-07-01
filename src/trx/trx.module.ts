@@ -8,5 +8,6 @@ import { DBModule } from '../lib/db/db.module';
   imports: [DBModule],
   controllers: [TrxController],
   providers: [TrxService, TrxRepository],
+  exports: [TrxService, TrxRepository],
 })
 export class TrxModule {}

@@ -4,17 +4,26 @@ import {
   WhooingInputData,
   WhooingInputForm,
 } from './dto/whooing-input-form.dto';
-import { TrxRepository } from '../trx/trx.repository';
 import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
 import { LogRepository } from './log.repository';
 import { LogEntity } from './entities/log.entity';
-import { WHOOING_WEBHOOK_BASE_URL } from '../lib/constants';
+import {
+  WHOOING_USER_ID_OF_APP_MASTER,
+  WHOOING_WEBHOOK_BASE_URL,
+} from '../lib/constants';
+import { OauthAccessTokenResponseDto } from '../oauth/dto/oauth-access-token-response.dto';
+import { TrxService } from '../trx/trx.service';
+import { OauthService } from '../oauth/oauth.service';
+import { plainToInstance } from 'class-transformer';
+import { WhooingResourceApiService } from '../lib/whooing-resource-api/whooing-resource-api.service';
 
 @Injectable()
 export class WhooLoopService {
   constructor(
-    private readonly trxRepository: TrxRepository,
+    private readonly trxService: TrxService,
+    private readonly oauthService: OauthService,
+    private readonly whooingApi: WhooingResourceApiService,
     private readonly logRepository: LogRepository,
   ) {}
 
@@ -22,7 +31,7 @@ export class WhooLoopService {
   @Cron('35 59 23 * * *')
   async dailyCronForExpire() {
     const today: string = getToday();
-    this.trxRepository.turnOffExpiredTrxs(today);
+    this.trxService.turnOffExpiredTrxs(today);
   }
 
   @Cron('3 * * * * *') // 매분 3초마다
@@ -76,8 +85,29 @@ export class WhooLoopService {
       .catch((error) => {
         logData.response_body = error.data;
         this.logRepository.create(logData);
-        this._sendErrorAlarmByWhooingMessage(logData);
+        this.sendErrorAlarmByWhooingMessage(logData);
       });
+  }
+
+  async sendErrorAlarmByWhooingMessage(logData: LogEntity): Promise<void> {
+    const targetUserId = await this.trxService.findUserIdxByTrxIdx(
+      logData.transaction_idx,
+    );
+    const whooingAccessData: OauthAccessTokenResponseDto = plainToInstance(
+      OauthAccessTokenResponseDto,
+      await this.oauthService.findUserIdxByWhooingUserId(
+        WHOOING_USER_ID_OF_APP_MASTER,
+      ),
+      {
+        excludeExtraneousValues: true,
+      },
+    ); // snake_case -> camelCase
+    const message = `[후룹 에러 알림] ${logData.request_body} 거래 자동입력 중 다음과 같은 후잉 웹훅 에러가 발생했습니다. ${logData.response_body}`;
+    await this.whooingApi.sendMessageByWhooingApi(
+      targetUserId,
+      message,
+      whooingAccessData,
+    );
   }
 
   private _makeWhooingInputForm(data: WhooingInputData): WhooingInputForm {
@@ -95,21 +125,6 @@ export class WhooLoopService {
     };
   }
 
-  private _sendErrorAlarmByWhooingMessage(logData: LogEntity): void {
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: WHOOING_WEBHOOK_BASE_URL + logData.webhook_token,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: {
-        title: 'WhooLoop 오류',
-        content: `WhooLoop( http://`,
-      },
-    };
-  }
-
   private async _getDataListByTime(): Promise<WhooingInputData[]> {
     const date = new Date();
     const dayOfWeekToday = date.getDay();
@@ -121,7 +136,7 @@ export class WhooLoopService {
     if (weekdays.includes(dayOfWeekToday)) {
       requestDayOfWeekData.push('w');
     }
-    const result = await this.trxRepository.findByTime(
+    const result = await this.trxService.findByTime(
       requestDayOfWeekData,
       timeNow,
     );

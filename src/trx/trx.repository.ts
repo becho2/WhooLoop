@@ -86,6 +86,15 @@ export class TrxRepository {
     return rows;
   }
 
+  async findUserIdxByTrxIdx(trxIdx: number): Promise<number> {
+    const sql = this.dbService.mysql
+      .select('user_idx')
+      .where('transaction_idx', trxIdx)
+      .from<TrxEntity>(this.trxTable);
+    const [rows] = await sql;
+    return rows.user_idx;
+  }
+
   async update(
     idx: number,
     userIdx: number,
