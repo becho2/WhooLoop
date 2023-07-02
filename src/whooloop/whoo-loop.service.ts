@@ -81,6 +81,9 @@ export class WhooLoopService {
       .then((response) => {
         logData.response_body = response.data;
         this.logRepository.create(logData);
+        if (response.data !== 'done') {
+          this.sendErrorAlarmByWhooingMessage(logData);
+        }
       })
       .catch((error) => {
         logData.response_body = error.data;
