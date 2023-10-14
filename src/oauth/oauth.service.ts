@@ -13,6 +13,7 @@ import { AuthService } from '../auth/auth.service';
 import { SectionService } from '../section/section.service';
 import { AccountService } from '../account/account.service';
 import { WhooingSectionResponseDto } from '../section/dto/whooing-section-response.dto';
+import { OAUTH_CALLBACK_URI } from './constants';
 
 @Injectable()
 export class OauthService {
@@ -50,7 +51,7 @@ export class OauthService {
         console.log(error);
       });
 
-    const requestAuthorizationUrl = `https://whooing.com/app_auth/authorize?token=${requestToken}`;
+    const requestAuthorizationUrl = `https://whooing.com/app_auth/authorize?token=${requestToken}&callbackuri=${OAUTH_CALLBACK_URI}`;
     return {
       requestToken: requestToken,
       whooingAuthUrl: requestAuthorizationUrl,
