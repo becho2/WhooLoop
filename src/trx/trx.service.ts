@@ -6,8 +6,8 @@ import { TrxRepository } from './trx.repository';
 @Injectable()
 export class TrxService {
   constructor(private readonly trxRepository: TrxRepository) {}
-  create(createTrxDto: CreateTrxDto) {
-    return this.trxRepository.create(createTrxDto);
+  async create(createTrxDto: CreateTrxDto) {
+    return await this.trxRepository.create(createTrxDto);
   }
 
   async findAll(userIdx: number) {

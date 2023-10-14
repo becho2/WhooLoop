@@ -22,9 +22,9 @@ export class TrxController {
 
   @Post()
   @UseGuards(AuthGuard('jwtAccessGuard'))
-  create(@Request() req: any, @Body() createTrxDto: CreateTrxDto) {
+  async create(@Request() req: any, @Body() createTrxDto: CreateTrxDto) {
     createTrxDto.user_idx = req.user.idx;
-    return this.trxService.create(createTrxDto);
+    return await this.trxService.create(createTrxDto);
   }
 
   @Get()

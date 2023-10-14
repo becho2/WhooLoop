@@ -13,7 +13,7 @@ export class TrxRepository {
   timeView = 'view_time_data_list';
   constructor(private readonly dbService: DBService) {}
   async create(createTrxDto: CreateTrxDto) {
-    return this.dbService.mysql.insert(createTrxDto).into(this.trxTable);
+    return await this.dbService.mysql.insert(createTrxDto).into(this.trxTable);
   }
 
   async findAll(userIdx: number): Promise<TrxEntity[]> {
