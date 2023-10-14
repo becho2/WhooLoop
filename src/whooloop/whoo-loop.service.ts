@@ -124,7 +124,7 @@ export class WhooLoopService {
         data.memo +
         ' / ' +
         getDateTimeNow() +
-        ' - WhooLoop( http://146.56.136.6:5173/ )에서 후잉 webhook을 통해 입력되었습니다.',
+        ' - WhooLoop( https://whooloop.todakbank.org/ )에서 후잉 webhook을 통해 입력되었습니다.',
     };
   }
 
