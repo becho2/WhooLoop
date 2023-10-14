@@ -13,7 +13,10 @@ import { AuthService } from '../auth/auth.service';
 import { SectionService } from '../section/section.service';
 import { AccountService } from '../account/account.service';
 import { WhooingSectionResponseDto } from '../section/dto/whooing-section-response.dto';
-import { OAUTH_CALLBACK_URI } from './constants';
+import {
+  OAUTH_CALLBACK_URI_DEVELOPMENT,
+  OAUTH_CALLBACK_URI_PRODUCTION,
+} from './constants';
 
 @Injectable()
 export class OauthService {
@@ -51,7 +54,11 @@ export class OauthService {
         console.log(error);
       });
 
-    const requestAuthorizationUrl = `https://whooing.com/app_auth/authorize?token=${requestToken}&callbackuri=${OAUTH_CALLBACK_URI}`;
+    const callbackUri =
+      process.env.NODE_ENV === 'production'
+        ? OAUTH_CALLBACK_URI_PRODUCTION
+        : OAUTH_CALLBACK_URI_DEVELOPMENT;
+    const requestAuthorizationUrl = `https://whooing.com/app_auth/authorize?token=${requestToken}&callbackuri=${callbackUri}`;
     return {
       requestToken: requestToken,
       whooingAuthUrl: requestAuthorizationUrl,
