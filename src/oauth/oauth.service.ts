@@ -88,10 +88,7 @@ export class OauthService {
       await this.afterLogin(userIdx, whooingAccessData);
     }
 
-    return this.authService.getAccessToken(
-      whooingAccessData.whooingUserId,
-      userIdx,
-    );
+    return this.authService.getAccessToken(userIdx);
   }
 
   /**
