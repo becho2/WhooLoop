@@ -6,7 +6,7 @@ import { AuthPayloadDto } from './dto/auth-payload.dto';
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  getAccessToken(whooingUserId: number | string, userIdx: number): string {
+  getAccessToken(userIdx: number): string {
     const authPayloadDto: AuthPayloadDto = {
       userIdx: userIdx,
     };
